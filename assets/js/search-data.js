@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/about/";
           },
-        },{id: "post-docker-tutorial",
+        },{id: "post-terraform-tutorial",
+      
+        title: "Terraform Tutorial",
+      
+      description: "Notes on Terraform",
+      section: "Posts",
+      handler: () => {
+        
+          window.location.href = "/blog/2025/terraform-notes/";
+        
+      },
+    },{id: "post-docker-tutorial",
       
         title: "Docker Tutorial",
       
