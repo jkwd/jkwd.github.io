@@ -3,7 +3,7 @@ layout: post
 title: Terraform Tutorial
 date: 2025-01-10 00:00:00
 description: Notes on Terraform
-tags: code learning infra terraform
+tags: learning infra terraform
 categories: terraform
 ---
 
