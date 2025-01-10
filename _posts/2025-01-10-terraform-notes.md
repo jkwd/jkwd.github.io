@@ -5,7 +5,6 @@ date: 2025-01-10 00:00:00
 description: Notes on Terraform
 tags: code learning infra terraform
 categories: terraform
-
 ---
 
 # Setup
@@ -14,8 +13,8 @@ categories: terraform
 
 1. https://www.terraform.io/downloads
 2. Set Env Path
-    1. System Variables → Path
-    {% include figure.liquid loading="eager" path="assets/img/2025-01-10-terraform-notes/1.png" class="img-fluid rounded z-depth-1" %}
+   1. System Variables → Path
+      {% include figure.liquid loading="eager" path="assets/img/2025-01-10-terraform-notes/1.png" class="img-fluid rounded z-depth-1" %}
 3. Add path to environment
 
 ## Mac via Homebrew
@@ -71,10 +70,10 @@ provider "aws" {
 2. Profile Name
 3. Security Credentials
 4. Access Key Tab
-{% include figure.liquid loading="eager" path="assets/img/2025-01-10-terraform-notes/2.png" class="img-fluid rounded z-depth-1" %}
+   {% include figure.liquid loading="eager" path="assets/img/2025-01-10-terraform-notes/2.png" class="img-fluid rounded z-depth-1" %}
 5. Create New Access Key
 6. Show Access Key
-    1. This will provide the value for `access_key` and `secret_key`
+   1. This will provide the value for `access_key` and `secret_key`
 7. Download Key File as `secret_key` will not be able to be found anymore after you close the tab
 
 ```terraform
@@ -105,7 +104,7 @@ resource "<provider>_<resource_type>" "<name>" {
 https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
 
 1. Obtain AMI from AWS to be used in the code
-{% include figure.liquid loading="eager" path="assets/img/2025-01-10-terraform-notes/3.png" class="img-fluid rounded z-depth-1" %}
+   {% include figure.liquid loading="eager" path="assets/img/2025-01-10-terraform-notes/3.png" class="img-fluid rounded z-depth-1" %}
 
 ```terraform
 # Configure the AWS Provider
@@ -118,7 +117,7 @@ provider "aws" {
 resource "aws_instance" "my-first-server" {
   ami           = "ami-055d15d9cfddf7bd3"
   instance_type = "t2.micro"
-  
+
   tags = {
     Name = "ubuntu"
   }
@@ -134,31 +133,38 @@ Looks at the config in `.tf` files and look for all the providers defined and wi
 ```bash
 terraform init
 ```
+
 {% include figure.liquid loading="eager" path="assets/img/2025-01-10-terraform-notes/4.png" class="img-fluid rounded z-depth-1" %}
 
 ## Terraform Plan
 
 Does a dry run of the code and show you all the changes that is going to be applied Delete/Create/Modify any instances.
+
 ```bash
 terraform plan
 ```
+
 {% include figure.liquid loading="eager" path="assets/img/2025-01-10-terraform-notes/5.png" class="img-fluid rounded z-depth-1" %}
 
 ## Terraform Apply
 
 Run the code to production.
+
 ```bash
 terraform apply
 ```
+
 {% include figure.liquid loading="eager" path="assets/img/2025-01-10-terraform-notes/6.png" class="img-fluid rounded z-depth-1" %}
 {% include figure.liquid loading="eager" path="assets/img/2025-01-10-terraform-notes/7.png" class="img-fluid rounded z-depth-1" %}
 
 ## Terraform Destroy
 
 Delete the whole architecture. Usually will not do this and will instead make changes within the file and use `terraform apply` to add/remove instances from the architecture.
+
 ```bash
 terraform destroy
 ```
+
 {% include figure.liquid loading="eager" path="assets/img/2025-01-10-terraform-notes/8.png" class="img-fluid rounded z-depth-1" %}
 {% include figure.liquid loading="eager" path="assets/img/2025-01-10-terraform-notes/9.png" class="img-fluid rounded z-depth-1" %}
 
@@ -170,7 +176,7 @@ terraform destroy
 
 ## Referencing Resources
 
-You can reference other resources by pointing to the  `<provider>_<resource_type>.<name>.id`
+You can reference other resources by pointing to the `<provider>_<resource_type>.<name>.id`
 
 ```terraform
 resource "aws_vpc" "first-vpc" {
@@ -192,6 +198,7 @@ resource "aws_subnet" "subnet-1" {
   }
 }
 ```
+
 {% include figure.liquid loading="eager" path="assets/img/2025-01-10-terraform-notes/10.png" class="img-fluid rounded z-depth-1" %}
 
 ## Terraform Files
@@ -203,9 +210,11 @@ resource "aws_subnet" "subnet-1" {
 ## Terraform State List
 
 This shows all the resources that was created along with the resource name
+
 ```bash
 terraform state list
 ```
+
 {% include figure.liquid loading="eager" path="assets/img/2025-01-10-terraform-notes/11.png" class="img-fluid rounded z-depth-1" %}
 
 ## Terraform State Show
@@ -216,6 +225,7 @@ This shows the detailed output regarding the state which would normally be store
 # terraform state show <resource>.<resource_name>
 terraform state show aws_eip.one
 ```
+
 {% include figure.liquid loading="eager" path="assets/img/2025-01-10-terraform-notes/12.png" class="img-fluid rounded z-depth-1" %}
 
 ## Terraform Output
@@ -231,6 +241,7 @@ output "server_public_ip" {
   value = aws_eip.one.public_ip
 }
 ```
+
 {% include figure.liquid loading="eager" path="assets/img/2025-01-10-terraform-notes/13.png" class="img-fluid rounded z-depth-1" %}
 
 <aside>

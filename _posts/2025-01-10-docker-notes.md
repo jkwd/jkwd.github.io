@@ -5,7 +5,6 @@ date: 2025-01-10 00:00:00
 description: Notes about Docker
 tags: code learning infra docker
 categories: docker
-
 ---
 
 # Tutorial Source
@@ -13,6 +12,7 @@ categories: docker
 [TechWorld with Nane - Docker Tutorial for Beginners [FULL COURSE in 3 Hours]](https://www.youtube.com/watch?v=3c-iBn73dDE)
 
 # Common commands
+
 Below are some of the common commands that you'll use for Docker.
 
 ## Get artefacts/images
@@ -32,6 +32,7 @@ docker pull postgres:10.10
 ```
 
 ## Run images
+
 ### Attached mode
 
 To run the image simply run the following command
@@ -58,6 +59,7 @@ docker run -d postgress:10.10
 ```
 
 ### Port forwarding/binding
+
 {% include figure.liquid loading="eager" path="assets/img/2025-01-10-docker-notes/2.png" class="img-fluid rounded z-depth-1" %}
 
 Sometimes if we require to run more than 1 application in the same host machine, they might conflict with using the same port. To solve this, we will need to change the port of the local machine to point to as shown in the example.
@@ -91,6 +93,7 @@ docker run -p3000:5432 --name pg_abc -d postgres:10.10
 {% include figure.liquid loading="eager" path="assets/img/2025-01-10-docker-notes/4.png" class="img-fluid rounded z-depth-1" %}
 
 ## Running with environmental variables
+
 Some images may use environmental variables in order to run. E.g. [Mongo DB](https://hub.docker.com/_/mongo).
 
 ```
@@ -102,16 +105,17 @@ docker run -p 27017:27017 -d --name some-mongo \
 ```
 
 ## Mounting volume for persistence of data in containers
+
 {% include figure.liquid loading="eager" path="assets/img/2025-01-10-docker-notes/5.png" class="img-fluid rounded z-depth-1" %}
 
 ### Types of Volumes
 
 1. Host Volumes
-{% include figure.liquid loading="eager" path="assets/img/2025-01-10-docker-notes/6.png" class="img-fluid rounded z-depth-1" %}
+   {% include figure.liquid loading="eager" path="assets/img/2025-01-10-docker-notes/6.png" class="img-fluid rounded z-depth-1" %}
 2. Anonymous Volumes
-{% include figure.liquid loading="eager" path="assets/img/2025-01-10-docker-notes/7.png" class="img-fluid rounded z-depth-1" %}
+   {% include figure.liquid loading="eager" path="assets/img/2025-01-10-docker-notes/7.png" class="img-fluid rounded z-depth-1" %}
 3. Named Volumes
-{% include figure.liquid loading="eager" path="assets/img/2025-01-10-docker-notes/8.png" class="img-fluid rounded z-depth-1" %}
+   {% include figure.liquid loading="eager" path="assets/img/2025-01-10-docker-notes/8.png" class="img-fluid rounded z-depth-1" %}
 
 ## Stop containers
 
@@ -143,7 +147,7 @@ You may view running containers using the following command
 docker ps
 ```
 
-This will only show you currently running containers. 
+This will only show you currently running containers.
 
 ### List Running and stopped containers
 
@@ -154,6 +158,7 @@ docker ps -a
 ```
 
 # Docker Network
+
 {% include figure.liquid loading="eager" path="assets/img/2025-01-10-docker-notes/9.png" class="img-fluid rounded z-depth-1" %}
 We package images into a network so that containers are able to find and talk to each other.
 
@@ -176,7 +181,7 @@ docker network create mongo-network
 
 ```docker
 # use --network <NETWORK NAME> to run the container in the network
-docker run -d \ 
+docker run -d \
 -p 27017:27017 \
 --network mongo-network \
 --name mongodb \
@@ -205,7 +210,7 @@ services:
     image: ${docker-registry}/my-app:1.0 # <IMAGE : From Private Repo>
     ports:
       - 3000:3000
-  
+
 	mongodb: # <CONTAINER NAME>
     image: mongo # <IMAGE : Default is from Public Docker Hub>
     ports:
@@ -256,6 +261,7 @@ docker-compose -f mongo.yaml down
 </aside>
 
 # Dockerfile
+
 After developing and testing a app, it can be packaged into its own docker container for deployment. This image is built via a Dockerfile. This step is usually done at Jenkins side before pushing into the Docker Repository.
 {% include figure.liquid loading="eager" path="assets/img/2025-01-10-docker-notes/10.png" class="img-fluid rounded z-depth-1" %}
 
@@ -282,6 +288,7 @@ CMD ["node", "/home/app/server.js"]
 ```
 
 ## Building an image from Dockerfile
+
 ```docker
 #docker build -t <IMAGE NAME>:<TAG> <LOCATION OF DOCKERFILE>
 docker build -t my-app:1.0 .
