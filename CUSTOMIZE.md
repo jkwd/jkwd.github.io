@@ -180,18 +180,18 @@ You can also:
 
 ### Removing the news section
 
-To remove the news section, you can:
+<!-- To remove the news section, you can:
 
 - delete the [\_news](_news/) directory
 - delete the file [\_includes/news.liquid](_includes/news.liquid) and the references to it in the [\_pages/about.md](_pages/about.md)
 - remove the `announcements` part in [\_config.yml](_config.yml)
-- remove the news part in the `Collections` section in the [\_config.yml](_config.yml) file
+- remove the news part in the `Collections` section in the [\_config.yml](_config.yml) file -->
 
 ### Removing the projects page
 
 To remove the projects, you can:
 
-- delete the [\_projects](_projects/) directory
+<!-- - delete the [\_projects](_projects/) directory
 - delete the projects page [\_pages/projects.md](_pages/projects.md)
 - remove reference to projects page in our [\_pages/dropdown.md](_pages/dropdown.md)
 - remove projects part in the `Collections` section in the [\_config.yml](_config.yml) file
@@ -199,11 +199,11 @@ To remove the projects, you can:
 You can also:
 
 - delete [\_includes/projects_horizontal.liquid](_includes/projects_horizontal.liquid)
-- delete [\_includes/projects.liquid](_includes/projects.liquid)
+- delete [\_includes/projects.liquid](_includes/projects.liquid) -->
 
 ### Removing the publications page
 
-To remove the publications, you can:
+<!-- To remove the publications, you can:
 
 - delete the [\_bibliography](_bibliography/) directory
 - delete the publications page [\_pages/publications.md](_pages/publications.md)
@@ -219,7 +219,7 @@ You can also:
 - delete [\_plugins/google-scholar-citations.rb](_plugins/google-scholar-citations.rb)
 - delete [\_plugins/hide-custom-bibtex.rb](_plugins/hide-custom-bibtex.rb)
 - delete [\_plugins/inspirehep-citations.rb](_plugins/inspirehep-citations.rb)
-- remove the `jekyll-scholar` gem from the [Gemfile](Gemfile) and the `plugins` section in [\_config.yml](_config.yml)
+- remove the `jekyll-scholar` gem from the [Gemfile](Gemfile) and the `plugins` section in [\_config.yml](_config.yml) -->
 
 ### Removing the repositories page
 
