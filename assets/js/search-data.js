@@ -38,11 +38,22 @@ ninja.data = [{
       
         title: "Docker Tutorial",
       
-      description: "Notes about Docker",
+      description: "Notes on Docker",
       section: "Posts",
       handler: () => {
         
           window.location.href = "/blog/2025/docker-notes/";
+        
+      },
+    },{id: "post-airflow-tutorial",
+      
+        title: "Airflow Tutorial",
+      
+      description: "Notes on Airflow",
+      section: "Posts",
+      handler: () => {
+        
+          window.location.href = "/blog/2025/airflow-notes/";
         
       },
     },{id: "post-profiling-my-favorite-songs-on-spotify-through-clustering",
