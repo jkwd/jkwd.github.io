@@ -17,8 +17,8 @@ ninja.data = [{
             window.location.href = "/index.html";
           },
         },{id: "nav-about",
-          title: "about",
-          description: "",
+          title: "About",
+          description: "Hi I&#39;m John! I am currently a Data Engineer and I have been in the data space for 7+ years. I&#39;ve designed and built scalable data pipelines across multiple industries (e.g. logistics, ride hailing, geospatial and cyber security).",
           section: "Navigation",
           handler: () => {
             window.location.href = "/about/";
