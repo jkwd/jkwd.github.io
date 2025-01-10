@@ -23,6 +23,14 @@ hr {
   border-top: 1px solid var(--global-divider-color);
 }
 
+aside {
+  color: var(--global-code-block-text-color);
+  background-color: var(--global-code-bg-color);
+  border-radius: 6px;
+  padding: 6px 12px;
+  margin-bottom: 1rem;
+}
+
 table {
   td,
   th {
