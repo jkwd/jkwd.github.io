@@ -23,3 +23,5 @@ social: true # includes social icons at the bottom of the page
 I'm a Data Engineer at [Proofpoint](https://www.proofpoint.com) as part of the Proofpoint Intelligent Classification and Protection (PICP) where we help organisations modernise and enhance their data security through AI based technologies.
 
 Previously, I worked as a Data Scientist (Analytics) in [Grab](https://www.grab.com), focusing on geospacial related products (e.g. routing, estimated time of arrival, navigation, maps).
+
+This blog is a space for me to document any notes/tutorials that I learn along the way in my career, as well as some personal projects that I'm working on.
