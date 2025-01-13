@@ -22,7 +22,7 @@ Thanks to Spotify API, I am able to extract and explore the songs I enjoy listen
 To get the data from the Spotify API, we will need to do an initial setup with the following steps:
 
 1. Login to [Spotify for Developers](https://developer.spotify.com/) and create an app.
-2. From the application dashboard page, select edit settings and set Redirect URIs as http://localhost:8888.
+2. From the application dashboard page, select edit settings and set Redirect URIs as `http://localhost:8888`.
 3. Take note of the Client ID and the Client Secret.
 
 ## Gathering data
