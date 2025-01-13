@@ -67,6 +67,17 @@ ninja.data = [{
           window.location.href = "/blog/2025/airflow-notes/";
         
       },
+    },{id: "post-databricks-de-associate-notes",
+      
+        title: "Databricks DE Associate Notes",
+      
+      description: "Notes for Databricks DE Associate Certification",
+      section: "Posts",
+      handler: () => {
+        
+          window.location.href = "/blog/2025/databricks-data-engineer-associate/";
+        
+      },
     },{id: "post-profiling-my-favourite-songs-on-spotify-through-clustering",
       
         title: "Profiling my favourite songs on Spotify through clustering",
