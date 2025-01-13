@@ -3,7 +3,8 @@ layout: post
 title: Airflow Tutorial
 date: 2025-01-10 00:00:00
 description: Notes on Airflow
-tags: learning data_engineering
+tags: data_engineering orchestrator
+categories: learning
 ---
 
 # Airflow CLI

@@ -3,8 +3,8 @@ layout: post
 title: Docker Tutorial
 date: 2025-01-10 00:00:00
 description: Notes on Docker
-tags: learning infra docker
-categories: docker
+tags: data_engineering infra docker
+categories: learning
 ---
 
 # Tutorial Source
