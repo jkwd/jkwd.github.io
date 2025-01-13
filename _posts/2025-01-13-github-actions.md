@@ -5,6 +5,9 @@ date: 2025-01-10 00:00:00
 description: Notes on Github Actions
 tags: data_engineering github_actions cicd
 categories: learning
+
+toc:
+  sidebar: left
 ---
 
 # Example

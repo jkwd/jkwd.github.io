@@ -5,6 +5,9 @@ date: 2025-01-10 00:00:00
 description: Notes on Airflow
 tags: data_engineering orchestrator
 categories: learning
+
+toc:
+  sidebar: left
 ---
 
 # Airflow CLI
