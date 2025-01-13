@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/about/";
           },
-        },{id: "post-terraform-tutorial",
+        },{id: "post-github-actions-tutorial",
+      
+        title: "Github Actions Tutorial",
+      
+      description: "Notes on Github Actions",
+      section: "Posts",
+      handler: () => {
+        
+          window.location.href = "/blog/2025/github-actions/";
+        
+      },
+    },{id: "post-terraform-tutorial",
       
         title: "Terraform Tutorial",
       
