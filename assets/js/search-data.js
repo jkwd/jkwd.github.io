@@ -56,15 +56,15 @@ ninja.data = [{
           window.location.href = "/blog/2025/airflow-notes/";
         
       },
-    },{id: "post-profiling-my-favorite-songs-on-spotify-through-clustering",
+    },{id: "post-profiling-my-favourite-songs-on-spotify-through-clustering",
       
-        title: 'Profiling my Favorite Songs on Spotify through clustering <svg width="1.2rem" height="1.2rem" top=".5rem" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M17 13.5v6H5v-12h6m3-3h6v6m0-6-9 9" class="icon_svg-stroke" stroke="#999" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path></svg>',
+        title: "Profiling my favourite songs on Spotify through clustering",
       
-      description: "",
+      description: "Personal data science EDA project",
       section: "Posts",
       handler: () => {
         
-          window.open("https://towardsdatascience.com/profiling-my-favorite-songs-on-spotify-through-clustering-33fee591783d?source=rss-4b20231e95c9------2", "_blank");
+          window.location.href = "/blog/2019/profiling-my-favourite-songs-on-spotify-through-clustering/";
         
       },
     },{
