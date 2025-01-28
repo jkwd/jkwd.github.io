@@ -34,7 +34,7 @@ on:
 env:
   WORKFLOW_ENV_1: gha-demo # Workflow level
 jobs:
-	lint:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Get code
@@ -51,8 +51,8 @@ jobs:
       - name: Lint code
         run: npm run lint
   test:
-	  # Job level environment
-	  env:
+    # Job level environment
+    env:
       JOB_ENV_1:
       JOB_ENV_1:
       JOB_ENV_1:
@@ -70,7 +70,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
       - name: Test code
-	      id: run-tests
+        id: run-tests
         run: npm run test
       - name: Upload test report
         if: failure() && steps.run-tests.outcome == 'failure'
@@ -158,16 +158,16 @@ Event Listeners operate on an OR condition within the branch/path and AND condit
 
 ```yaml
 jobs:
-	build:
-	    needs: test
-	    runs-on: ubuntu-latest
-	    steps:
-	      - name: Get code
-	        uses: actions/checkout@v3
-	      - name: Install dependencies
-	        run: npm ci
-	      - name: Build website
-	        run: npm run build
+  build:
+      needs: test
+      runs-on: ubuntu-latest
+      steps:
+        - name: Get code
+          uses: actions/checkout@v3
+        - name: Install dependencies
+          run: npm ci
+        - name: Build website
+          run: npm run build
 ```
 
 - Requres the `runs-on` to specify the type of machine the steps will run on
@@ -177,16 +177,16 @@ jobs:
 
 ```yaml
 steps:
-	- name: Get code
-	  uses: actions/checkout@v3
+  - name: Get code
+    uses: actions/checkout@v3
 
-	- name: Install NodeJS
-	  uses: actions/setup-node@v3
-	  with:
-	    node-version: 18
+  - name: Install NodeJS
+    uses: actions/setup-node@v3
+    with:
+      node-version: 18
 
-	- name: Install dependencies
-	  run: npm ci
+  - name: Install dependencies
+    run: npm ci
 ```
 
 - `run` - anything eg bash commands etc
@@ -208,19 +208,19 @@ steps:
 
 ```yaml
 steps:
-	- name: Get code
-	  uses: actions/checkout@v3
-	- name: Install dependencies
-	  run: npm ci
-	- name: Build website
-	  run: npm run build
-	- name: Upload artifacts
-	  uses: actions/upload-artifact@v3
-	  with:
-	    name: dist-files
-	    path: |
-	      dist
-	      package.json
+  - name: Get code
+    uses: actions/checkout@v3
+  - name: Install dependencies
+    run: npm ci
+  - name: Build website
+    run: npm run build
+  - name: Upload artifacts
+    uses: actions/upload-artifact@v3
+    with:
+      name: dist-files
+      path: |
+        dist
+        package.json
 ```
 
 - Artifacts shown in github actions workflow
@@ -236,10 +236,10 @@ steps:
 
 ```yaml
 steps:
-	- name: Get build artifacts
-	  uses: actions/download-artifact@v3
-	  with:
-	    name: dist-files
+  - name: Get build artifacts
+    uses: actions/download-artifact@v3
+    with:
+      name: dist-files
   - name: Output contents
     run: ls
 ```
@@ -307,24 +307,24 @@ https://github.com/actions/cache/blob/main/examples.md#node---npm
 
 ```yaml
 test:
-	...
-	  - name: Cache dependencies
-	    uses: actions/cache@v3
-	    with:
-	      path: ~/.npm
-	      key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
-	  - name: Install dependencies
-	    run: npm ci
-	  - ...
+  # Do something above
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+    - name: Install dependencies
+      run: npm ci
+    - ...
 build:
-	...
-	  - name: Cache dependencies
-	    uses: actions/cache@v3
-	    with:
-	      path: ~/.npm
-	      key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
-	  - name: Install dependencies
-	    run: npm ci
+  # Do something above
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+    - name: Install dependencies
+      run: npm ci
     - ...
 ```
 
@@ -352,12 +352,12 @@ jobs:
       PORT: 8080
     runs-on: ubuntu-latest
     steps:
-			...
-			# Reference the job level env var PORT
-			- name: Run server
+      # Do something above
+      # Reference the job level env var PORT
+      - name: Run server
         run: npm start & npx wait-on http://127.0.0.1:$PORT
   deploy:
-	  # Previous Job ENV_VARs not accessible
+    # Previous Job ENV_VARs not accessible
 
 ```
 
@@ -389,12 +389,12 @@ jobs:
       PORT: 8080
     runs-on: ubuntu-latest
     steps:
-			...
-			# Reference the job level env var PORT
-			- name: Run server
+      # Do something above
+      # Reference the job level env var PORT
+      - name: Run server
         run: npm start & npx wait-on http://127.0.0.1:$PORT
   deploy:
-	  # Previous Job ENV_VARs not accessible
+    # Previous Job ENV_VARs not accessible
 ```
 
 <aside>
@@ -422,7 +422,7 @@ env:
   MONGODB_DB_NAME: gha-demo # Workflow level ENV_VAR
 jobs:
   test:
-	  environment: testing # To use the environment secrets named 'testing'
+    environment: testing # To use the environment secrets named 'testing'
     # Job level ENV_VAR
     env:
       MONGODB_CLUSTER_ADDRESS: cluster_1.mongodb.net
@@ -431,12 +431,12 @@ jobs:
       PORT: 8080
     runs-on: ubuntu-latest
     steps:
-			...
-			# Reference the job level env var PORT
-			- name: Run server
+      # Do something above
+      # Reference the job level env var PORT
+      - name: Run server
         run: npm start & npx wait-on http://127.0.0.1:$PORT
   deploy:
-	  # Previous Job ENV_VARs not accessible
+    # Previous Job ENV_VARs not accessible
 ```
 
 # Execution flow
@@ -510,10 +510,10 @@ on:
 
 jobs:
   lint:
-		continue-on-erro: true # To let the rest of the jobs run if 1 fails
+    continue-on-erro: true # To let the rest of the jobs run if 1 fails
     strategy:
       matrix:
-	      # Create 3 x 2 combinations
+        # Create 3 x 2 combinations
         node-version: [12, 14, 16]
         operating-system: [ubuntu-latest, windows-latest]
         # Exclude combination in the matrix
@@ -600,15 +600,15 @@ on:
     branches:
       - main
 jobs:
-	lint: ...
-	test: ...
-	build: ...
-	deploy:
-		needs: build
-		uses: ./.github/workflows/reusable.yml # yml of the workflow to use
-		with:
+  lint: ...
+  test: ...
+  build: ...
+  deploy:
+    needs: build
+    uses: ./.github/workflows/reusable.yml # yml of the workflow to use
+    with:
       artifact-name: dist-files # To pass the variable over to reusable.yml
-	  secrets:
+    secrets:
       some-secret: ${{ secrets.some-secret }}
   print-deploy-result:
     needs: deploy
@@ -638,8 +638,8 @@ jobs:
       MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
       PORT: 8080
     steps:
-	    - ...
-	    - ...
+      - ...
+      - ...
 ```
 
 {% include figure.liquid loading="eager" path="assets/img/2025-01-13-github-actions/17.png" class="img-fluid rounded z-depth-1" %}
@@ -678,7 +678,7 @@ jobs:
       another-service:
         ...
     steps:
-	    - ...
+      - ...
 ```
 
 <aside>
@@ -702,14 +702,14 @@ jobs:
       mongodb-service: # Testing DB - will be deleted after job ends
         image: mongo
         ports: # Need to open the mongodb port
-	        - 27017:27017
+          - 27017:27017
         env:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: example
       another-service:
         ...
     steps:
-	    - ...
+      - ...
 ```
 
 <aside>
@@ -962,8 +962,8 @@ on:
       - opened
 jobs:
   assign-label:
-	  permissions: # RESTRICT PERMISSION. DEFAULT: FULL ACCESS ON EVERYTHING.
-		  issues: write
+    permissions: # RESTRICT PERMISSION. DEFAULT: FULL ACCESS ON EVERYTHING.
+      issues: write
     runs-on: ubuntu-latest
     steps:
       - name: Assign label
@@ -993,12 +993,12 @@ Repository → Setting → Action → General
 ## Managing Secret Keys for 3rd-party platforms
 
 ```yaml
- - name: Deploy site
-		id: deploy
-		uses: ./.github/actions/deploy-s3-javascript
-		env:
-		  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-		  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+- name: Deploy site
+  id: deploy
+  uses: ./.github/actions/deploy-s3-javascript
+  env:
+    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 ```
 
 - Information like `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` are saved in the github action secrets
@@ -1011,17 +1011,17 @@ Repository → Setting → Action → General
 
 ```yaml
 job:
-	deploy:
-		permissions:
-			id-token: write # REQUIRED as default GITHUB_TOKEN is set to None for this
-			contents: read
-		...
-		steps:
-			...
-			- name: Get AWS Permissions
-				uses: aws-actions/configure-aws-credentials@v1
-				with:
-					role-to-assume: arn:aws:iam::...
-					aws-region: ...
-			...
+  deploy:
+    permissions:
+      id-token: write # REQUIRED as default GITHUB_TOKEN is set to None for this
+      contents: read
+    ...
+    steps:
+      # Do something above
+      - name: Get AWS Permissions
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::...
+          aws-region: ...
+      ...
 ```
