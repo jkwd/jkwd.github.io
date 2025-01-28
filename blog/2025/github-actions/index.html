@@ -21,7 +21,7 @@
 <span class="na">env</span><span class="pi">:</span>
   <span class="na">WORKFLOW_ENV_1</span><span class="pi">:</span> <span class="s">gha-demo</span> <span class="c1"># Workflow level</span>
 <span class="na">jobs</span><span class="pi">:</span>
-<span class="err">	</span><span class="na">lint</span><span class="pi">:</span>
+  <span class="na">lint</span><span class="pi">:</span>
     <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
     <span class="na">steps</span><span class="pi">:</span>
       <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get code</span>
@@ -38,12 +38,12 @@
       <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Lint code</span>
         <span class="na">run</span><span class="pi">:</span> <span class="s">npm run lint</span>
   <span class="na">test</span><span class="pi">:</span>
-<span class="err">	</span>  <span class="c1"># Job level environment</span>
-<span class="err">	</span>  <span class="na">env</span><span class="pi">:</span>
+    <span class="c1"># Job level environment</span>
+    <span class="na">env</span><span class="pi">:</span>
       <span class="na">JOB_ENV_1</span><span class="pi">:</span>
       <span class="na">JOB_ENV_1</span><span class="pi">:</span>
       <span class="na">JOB_ENV_1</span><span class="pi">:</span>
-  <span class="err">  </span><span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
     <span class="na">steps</span><span class="pi">:</span>
       <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get code</span>
         <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v3</span>
@@ -57,12 +57,12 @@
         <span class="na">if</span><span class="pi">:</span> <span class="s">steps.cache.outputs.cache-hit != 'true'</span>
         <span class="na">run</span><span class="pi">:</span> <span class="s">npm ci</span>
       <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Test code</span>
-<span class="na">	      id</span><span class="pi">:</span> <span class="s">run-tests</span>
-        <span class="s">run</span><span class="err">:</span> <span class="s">npm run test</span>
-      <span class="s">- name</span><span class="err">:</span> <span class="s">Upload test report</span>
-        <span class="s">if</span><span class="err">:</span> <span class="s">failure() &amp;&amp; steps.run-tests.outcome == 'failure'</span>
-        <span class="s">uses</span><span class="err">:</span> <span class="s">actions/upload-artifact@v3</span>
-        <span class="s">with</span><span class="err">:</span>
+        <span class="na">id</span><span class="pi">:</span> <span class="s">run-tests</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm run test</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Upload test report</span>
+        <span class="na">if</span><span class="pi">:</span> <span class="s">failure() &amp;&amp; steps.run-tests.outcome == 'failure'</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/upload-artifact@v3</span>
+        <span class="na">with</span><span class="pi">:</span>
           <span class="na">name</span><span class="pi">:</span> <span class="s">test-report</span>
           <span class="na">path</span><span class="pi">:</span> <span class="s">test.json</span>
   <span class="na">build</span><span class="pi">:</span>
@@ -116,46 +116,46 @@
           <span class="s">echo "something went wrong..."</span>
           <span class="s">echo "$"</span>
 </code></pre></div></div> <aside> 💡 YML file needs to be stored in `.github/workflows` directory </aside> <h1 id="workflow">Workflow</h1> <ul> <li>Requires the <code class="language-plaintext highlighter-rouge">name</code> of the workflow</li> <li>Requires the <code class="language-plaintext highlighter-rouge">on</code> to listen to events to trigger the workflow</li> </ul> <h2 id="event-listeners">Event Listeners</h2> <ul> <li> <code class="language-plaintext highlighter-rouge">workflow_dispatch</code> <ul> <li>manual trigger</li> </ul> </li> <li> <code class="language-plaintext highlighter-rouge">pull_request</code> <ul> <li>requires types - has some default types if not specified</li> <li>Allows for branches/path targetted</li> </ul> </li> <li> <code class="language-plaintext highlighter-rouge">push</code> <ul> <li>Allows for branches/path targetted</li> </ul> </li> </ul> <aside> 💡 branches and paths have the compliment version (e.g. branch-ignore/path-ignore). Event Listeners operate on an OR condition within the branch/path and AND condition betwenn branch/path </aside> <h1 id="jobs">Jobs</h1> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">jobs</span><span class="pi">:</span>
-<span class="err">	</span><span class="na">build</span><span class="pi">:</span>
-<span class="err">	</span>    <span class="na">needs</span><span class="pi">:</span> <span class="s">test</span>
-<span class="na">	    runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
-<span class="na">	    steps</span><span class="pi">:</span>
-<span class="err">	</span>      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get code</span>
-<span class="na">	        uses</span><span class="pi">:</span> <span class="s">actions/checkout@v3</span>
-<span class="na">	      - name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
-<span class="na">	        run</span><span class="pi">:</span> <span class="s">npm ci</span>
-<span class="na">	      - name</span><span class="pi">:</span> <span class="s">Build website</span>
-<span class="na">	        run</span><span class="pi">:</span> <span class="s">npm run build</span>
+  <span class="na">build</span><span class="pi">:</span>
+      <span class="na">needs</span><span class="pi">:</span> <span class="s">test</span>
+      <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+      <span class="na">steps</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get code</span>
+          <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v3</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
+          <span class="na">run</span><span class="pi">:</span> <span class="s">npm ci</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Build website</span>
+          <span class="na">run</span><span class="pi">:</span> <span class="s">npm run build</span>
 </code></pre></div></div> <ul> <li>Requres the <code class="language-plaintext highlighter-rouge">runs-on</code> to specify the type of machine the steps will run on</li> <li> <code class="language-plaintext highlighter-rouge">needs</code> is used to specify the upstream job dependency (e.g. <code class="language-plaintext highlighter-rouge">build</code> job depends on <code class="language-plaintext highlighter-rouge">test</code>)</li> </ul> <h2 id="steps">Steps</h2> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">steps</span><span class="pi">:</span>
-<span class="err">	</span><span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get code</span>
-<span class="na">	  uses</span><span class="pi">:</span> <span class="s">actions/checkout@v3</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get code</span>
+    <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v3</span>
 
-<span class="na">	- name</span><span class="pi">:</span> <span class="s">Install NodeJS</span>
-<span class="na">	  uses</span><span class="pi">:</span> <span class="s">actions/setup-node@v3</span>
-<span class="na">	  with</span><span class="pi">:</span>
-<span class="err">	</span>    <span class="na">node-version</span><span class="pi">:</span> <span class="m">18</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install NodeJS</span>
+    <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/setup-node@v3</span>
+    <span class="na">with</span><span class="pi">:</span>
+      <span class="na">node-version</span><span class="pi">:</span> <span class="m">18</span>
 
-<span class="err">	</span><span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
-<span class="na">	  run</span><span class="pi">:</span> <span class="s">npm ci</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
+    <span class="na">run</span><span class="pi">:</span> <span class="s">npm ci</span>
 </code></pre></div></div> <ul> <li> <code class="language-plaintext highlighter-rouge">run</code> - anything eg bash commands etc</li> <li> <code class="language-plaintext highlighter-rouge">uses</code>- uses existing github actions packages to help <ul> <li> <code class="language-plaintext highlighter-rouge">with</code>- additional parameters to be used with the actions package</li> </ul> </li> </ul> <h1 id="skip-workflow">Skip Workflow</h1> <ul> <li> <code class="language-plaintext highlighter-rouge">git commit -m "Add comment [skip ci]"</code> <ul> <li>To not make workflow run for this particular push</li> </ul> </li> </ul> <h1 id="job-artifacts--outputs">Job Artifacts &amp; Outputs</h1> <h2 id="artifacts">Artifacts</h2> <h3 id="upload-artifacts">Upload artifacts</h3> <ul> <li>Output from the workflow, e.g. log files or app binaries from build</li> </ul> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">steps</span><span class="pi">:</span>
-<span class="err">	</span><span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get code</span>
-<span class="na">	  uses</span><span class="pi">:</span> <span class="s">actions/checkout@v3</span>
-<span class="na">	- name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
-<span class="na">	  run</span><span class="pi">:</span> <span class="s">npm ci</span>
-<span class="na">	- name</span><span class="pi">:</span> <span class="s">Build website</span>
-<span class="na">	  run</span><span class="pi">:</span> <span class="s">npm run build</span>
-<span class="na">	- name</span><span class="pi">:</span> <span class="s">Upload artifacts</span>
-<span class="na">	  uses</span><span class="pi">:</span> <span class="s">actions/upload-artifact@v3</span>
-<span class="na">	  with</span><span class="pi">:</span>
-<span class="err">	</span>    <span class="na">name</span><span class="pi">:</span> <span class="s">dist-files</span>
-<span class="na">	    path</span><span class="pi">:</span> <span class="pi">|</span>
-<span class="err">	</span><span class="s">      dist</span>
-<span class="err">	</span><span class="s">      package.json</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get code</span>
+    <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v3</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
+    <span class="na">run</span><span class="pi">:</span> <span class="s">npm ci</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Build website</span>
+    <span class="na">run</span><span class="pi">:</span> <span class="s">npm run build</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Upload artifacts</span>
+    <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/upload-artifact@v3</span>
+    <span class="na">with</span><span class="pi">:</span>
+      <span class="na">name</span><span class="pi">:</span> <span class="s">dist-files</span>
+      <span class="na">path</span><span class="pi">:</span> <span class="pi">|</span>
+        <span class="s">dist</span>
+        <span class="s">package.json</span>
 </code></pre></div></div> <ul> <li>Artifacts shown in github actions workflow <ul> <li>Contains both dist and package.json as specified above</li> </ul> </li> </ul> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/1-480.webp 480w,/assets/img/2025-01-13-github-actions/1-800.webp 800w,/assets/img/2025-01-13-github-actions/1-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/1.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <div class="col-sm-6 mx-auto"> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/2-480.webp 480w,/assets/img/2025-01-13-github-actions/2-800.webp 800w,/assets/img/2025-01-13-github-actions/2-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/2.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> </div> <h3 id="downloading-artifacts">Downloading artifacts</h3> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">steps</span><span class="pi">:</span>
-<span class="err">	</span><span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get build artifacts</span>
-<span class="na">	  uses</span><span class="pi">:</span> <span class="s">actions/download-artifact@v3</span>
-<span class="na">	  with</span><span class="pi">:</span>
-<span class="err">	</span>    <span class="na">name</span><span class="pi">:</span> <span class="s">dist-files</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get build artifacts</span>
+    <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/download-artifact@v3</span>
+    <span class="na">with</span><span class="pi">:</span>
+      <span class="na">name</span><span class="pi">:</span> <span class="s">dist-files</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Output contents</span>
     <span class="na">run</span><span class="pi">:</span> <span class="s">ls</span>
 </code></pre></div></div> <ul> <li>Files are already unpacked</li> </ul> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/3-480.webp 480w,/assets/img/2025-01-13-github-actions/3-800.webp 800w,/assets/img/2025-01-13-github-actions/3-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/3.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h2 id="job-outputs">Job Outputs</h2> <ul> <li>Different from artifacts <ul> <li>Typically used for reusing value in downstream jobs (e.g. name of file)</li> </ul> </li> </ul> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">build</span><span class="pi">:</span>
@@ -193,25 +193,25 @@
       <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Deploy</span>
         <span class="na">run</span><span class="pi">:</span> <span class="s">echo "Deploying..."</span>
 </code></pre></div></div> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/4-480.webp 480w,/assets/img/2025-01-13-github-actions/4-800.webp 800w,/assets/img/2025-01-13-github-actions/4-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/4.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <div class="col-sm-9 mx-auto"> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/5-480.webp 480w,/assets/img/2025-01-13-github-actions/5-800.webp 800w,/assets/img/2025-01-13-github-actions/5-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/5.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> </div> <h1 id="dependency-caching">Dependency Caching</h1> <ul> <li>Cache repeated steps to reduce time of workflow</li> </ul> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/6-480.webp 480w,/assets/img/2025-01-13-github-actions/6-800.webp 800w,/assets/img/2025-01-13-github-actions/6-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/6.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <p>https://github.com/actions/cache/blob/main/examples.md#node—npm</p> <ul> <li>Looks for the file hash of the dependency installation details (In js is package-lock.json) <ul> <li>To be used in all the repeated palces with the same <code class="language-plaintext highlighter-rouge">key</code> </li> </ul> </li> </ul> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">test</span><span class="pi">:</span>
-<span class="err">	</span><span class="s">...</span>
-<span class="na">	  - name</span><span class="pi">:</span> <span class="s">Cache dependencies</span>
-<span class="na">	    uses</span><span class="pi">:</span> <span class="s">actions/cache@v3</span>
-<span class="na">	    with</span><span class="pi">:</span>
-<span class="err">	</span>      <span class="na">path</span><span class="pi">:</span> <span class="s">~/.npm</span>
-<span class="na">	      key</span><span class="pi">:</span> <span class="s">deps-node-modules-$</span>
-<span class="na">	  - name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
-<span class="na">	    run</span><span class="pi">:</span> <span class="s">npm ci</span>
-<span class="err">	</span>  <span class="s">- ...</span>
+  <span class="c1"># Do something above</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Cache dependencies</span>
+      <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/cache@v3</span>
+      <span class="na">with</span><span class="pi">:</span>
+        <span class="na">path</span><span class="pi">:</span> <span class="s">~/.npm</span>
+        <span class="na">key</span><span class="pi">:</span> <span class="s">deps-node-modules-$</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
+      <span class="na">run</span><span class="pi">:</span> <span class="s">npm ci</span>
+    <span class="pi">-</span> <span class="s">...</span>
 <span class="na">build</span><span class="pi">:</span>
-<span class="err">	</span><span class="s">...</span>
-<span class="na">	  - name</span><span class="pi">:</span> <span class="s">Cache dependencies</span>
-<span class="na">	    uses</span><span class="pi">:</span> <span class="s">actions/cache@v3</span>
-<span class="na">	    with</span><span class="pi">:</span>
-<span class="err">	</span>      <span class="na">path</span><span class="pi">:</span> <span class="s">~/.npm</span>
-<span class="na">	      key</span><span class="pi">:</span> <span class="s">deps-node-modules-$</span>
-<span class="na">	  - name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
-<span class="na">	    run</span><span class="pi">:</span> <span class="s">npm ci</span>
-    <span class="s">- ...</span>
+  <span class="c1"># Do something above</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Cache dependencies</span>
+      <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/cache@v3</span>
+      <span class="na">with</span><span class="pi">:</span>
+        <span class="na">path</span><span class="pi">:</span> <span class="s">~/.npm</span>
+        <span class="na">key</span><span class="pi">:</span> <span class="s">deps-node-modules-$</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
+      <span class="na">run</span><span class="pi">:</span> <span class="s">npm ci</span>
+    <span class="pi">-</span> <span class="s">...</span>
 </code></pre></div></div> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/7-480.webp 480w,/assets/img/2025-01-13-github-actions/7-800.webp 800w,/assets/img/2025-01-13-github-actions/7-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/7.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/8-480.webp 480w,/assets/img/2025-01-13-github-actions/8-800.webp 800w,/assets/img/2025-01-13-github-actions/8-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/8.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h1 id="environment-variables">Environment Variables</h1> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">Deployment</span>
 <span class="na">on</span><span class="pi">:</span>
   <span class="na">push</span><span class="pi">:</span>
@@ -230,12 +230,12 @@
       <span class="na">PORT</span><span class="pi">:</span> <span class="m">8080</span>
     <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
     <span class="na">steps</span><span class="pi">:</span>
-<span class="err">			</span><span class="s">...</span>
-<span class="err">			</span><span class="c1"># Reference the job level env var PORT</span>
-<span class="err">			</span><span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run server</span>
-        <span class="s">run</span><span class="err">:</span> <span class="s">npm start &amp; npx wait-on http://127.0.0.1:$PORT</span>
+      <span class="c1"># Do something above</span>
+      <span class="c1"># Reference the job level env var PORT</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run server</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm start &amp; npx wait-on http://127.0.0.1:$PORT</span>
   <span class="na">deploy</span><span class="pi">:</span>
-<span class="err">	</span>  <span class="c1"># Previous Job ENV_VARs not accessible</span>
+    <span class="c1"># Previous Job ENV_VARs not accessible</span>
 
 </code></pre></div></div> <h1 id="secrets">Secrets</h1> <h2 id="repository-secrets">Repository Secrets</h2> <ul> <li>To prevent pushing username/passwords into the <code class="language-plaintext highlighter-rouge">.github/workflows/</code> code <ul> <li>Create via Repository secrets</li> </ul> </li> </ul> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/9-480.webp 480w,/assets/img/2025-01-13-github-actions/9-800.webp 800w,/assets/img/2025-01-13-github-actions/9-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/9.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">Deployment</span>
 <span class="na">on</span><span class="pi">:</span>
@@ -255,12 +255,12 @@
       <span class="na">PORT</span><span class="pi">:</span> <span class="m">8080</span>
     <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
     <span class="na">steps</span><span class="pi">:</span>
-<span class="err">			</span><span class="s">...</span>
-<span class="err">			</span><span class="c1"># Reference the job level env var PORT</span>
-<span class="err">			</span><span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run server</span>
-        <span class="s">run</span><span class="err">:</span> <span class="s">npm start &amp; npx wait-on http://127.0.0.1:$PORT</span>
+      <span class="c1"># Do something above</span>
+      <span class="c1"># Reference the job level env var PORT</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run server</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm start &amp; npx wait-on http://127.0.0.1:$PORT</span>
   <span class="na">deploy</span><span class="pi">:</span>
-<span class="err">	</span>  <span class="c1"># Previous Job ENV_VARs not accessible</span>
+    <span class="c1"># Previous Job ENV_VARs not accessible</span>
 </code></pre></div></div> <aside> 💡 When echo the environment variable with secrets, it’ll hide the info and print `***` </aside> <h2 id="environment-secrets">Environment Secrets</h2> <ul> <li>Allow you to have different secret values for different environment <ul> <li>Testing</li> <li>Production</li> </ul> </li> <li>Allows secrets to be used on certain branch/tag logic</li> </ul> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/10-480.webp 480w,/assets/img/2025-01-13-github-actions/10-800.webp 800w,/assets/img/2025-01-13-github-actions/10-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/10.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/11-480.webp 480w,/assets/img/2025-01-13-github-actions/11-800.webp 800w,/assets/img/2025-01-13-github-actions/11-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/11.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">Deployment</span>
 <span class="na">on</span><span class="pi">:</span>
   <span class="na">push</span><span class="pi">:</span>
@@ -271,7 +271,7 @@
   <span class="na">MONGODB_DB_NAME</span><span class="pi">:</span> <span class="s">gha-demo</span> <span class="c1"># Workflow level ENV_VAR</span>
 <span class="na">jobs</span><span class="pi">:</span>
   <span class="na">test</span><span class="pi">:</span>
-<span class="err">	</span>  <span class="na">environment</span><span class="pi">:</span> <span class="s">testing</span> <span class="c1"># To use the environment secrets named 'testing'</span>
+    <span class="na">environment</span><span class="pi">:</span> <span class="s">testing</span> <span class="c1"># To use the environment secrets named 'testing'</span>
     <span class="c1"># Job level ENV_VAR</span>
     <span class="na">env</span><span class="pi">:</span>
       <span class="na">MONGODB_CLUSTER_ADDRESS</span><span class="pi">:</span> <span class="s">cluster_1.mongodb.net</span>
@@ -280,12 +280,12 @@
       <span class="na">PORT</span><span class="pi">:</span> <span class="m">8080</span>
     <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
     <span class="na">steps</span><span class="pi">:</span>
-<span class="err">			</span><span class="s">...</span>
-<span class="err">			</span><span class="c1"># Reference the job level env var PORT</span>
-<span class="err">			</span><span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run server</span>
-        <span class="s">run</span><span class="err">:</span> <span class="s">npm start &amp; npx wait-on http://127.0.0.1:$PORT</span>
+      <span class="c1"># Do something above</span>
+      <span class="c1"># Reference the job level env var PORT</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run server</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm start &amp; npx wait-on http://127.0.0.1:$PORT</span>
   <span class="na">deploy</span><span class="pi">:</span>
-<span class="err">	</span>  <span class="c1"># Previous Job ENV_VARs not accessible</span>
+    <span class="c1"># Previous Job ENV_VARs not accessible</span>
 </code></pre></div></div> <h1 id="execution-flow">Execution flow</h1> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/12-480.webp 480w,/assets/img/2025-01-13-github-actions/12-800.webp 800w,/assets/img/2025-01-13-github-actions/12-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/12.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h2 id="step-level-if-condition">Step level if condition</h2> <h3 id="failure-example">Failure example</h3> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Test code</span>
   <span class="na">id</span><span class="pi">:</span> <span class="s">run-tests</span>
   <span class="na">run</span><span class="pi">:</span> <span class="s">npm run test</span>
@@ -321,10 +321,10 @@
 
 <span class="na">jobs</span><span class="pi">:</span>
   <span class="na">lint</span><span class="pi">:</span>
-<span class="err">		</span><span class="na">continue-on-erro</span><span class="pi">:</span> <span class="kc">true</span> <span class="c1"># To let the rest of the jobs run if 1 fails</span>
+    <span class="na">continue-on-erro</span><span class="pi">:</span> <span class="kc">true</span> <span class="c1"># To let the rest of the jobs run if 1 fails</span>
     <span class="na">strategy</span><span class="pi">:</span>
       <span class="na">matrix</span><span class="pi">:</span>
-<span class="err">	</span>      <span class="c1"># Create 3 x 2 combinations</span>
+        <span class="c1"># Create 3 x 2 combinations</span>
         <span class="na">node-version</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">12</span><span class="pi">,</span> <span class="nv">14</span><span class="pi">,</span> <span class="nv">16</span><span class="pi">]</span>
         <span class="na">operating-system</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">ubuntu-latest</span><span class="pi">,</span> <span class="nv">windows-latest</span><span class="pi">]</span>
         <span class="c1"># Exclude combination in the matrix</span>
@@ -393,15 +393,15 @@
     <span class="na">branches</span><span class="pi">:</span>
       <span class="pi">-</span> <span class="s">main</span>
 <span class="na">jobs</span><span class="pi">:</span>
-<span class="err">	</span><span class="na">lint</span><span class="pi">:</span> <span class="s">...</span>
-<span class="na">	test</span><span class="pi">:</span> <span class="s">...</span>
-<span class="na">	build</span><span class="pi">:</span> <span class="s">...</span>
-<span class="na">	deploy</span><span class="pi">:</span>
-<span class="err">		</span><span class="na">needs</span><span class="pi">:</span> <span class="s">build</span>
-<span class="na">		uses</span><span class="pi">:</span> <span class="s">./.github/workflows/reusable.yml</span> <span class="c1"># yml of the workflow to use</span>
-<span class="err">		</span><span class="na">with</span><span class="pi">:</span>
+  <span class="na">lint</span><span class="pi">:</span> <span class="s">...</span>
+  <span class="na">test</span><span class="pi">:</span> <span class="s">...</span>
+  <span class="na">build</span><span class="pi">:</span> <span class="s">...</span>
+  <span class="na">deploy</span><span class="pi">:</span>
+    <span class="na">needs</span><span class="pi">:</span> <span class="s">build</span>
+    <span class="na">uses</span><span class="pi">:</span> <span class="s">./.github/workflows/reusable.yml</span> <span class="c1"># yml of the workflow to use</span>
+    <span class="na">with</span><span class="pi">:</span>
       <span class="na">artifact-name</span><span class="pi">:</span> <span class="s">dist-files</span> <span class="c1"># To pass the variable over to reusable.yml</span>
-<span class="err">	  </span><span class="na">secrets</span><span class="pi">:</span>
+    <span class="na">secrets</span><span class="pi">:</span>
       <span class="na">some-secret</span><span class="pi">:</span> <span class="s">$</span>
   <span class="na">print-deploy-result</span><span class="pi">:</span>
     <span class="na">needs</span><span class="pi">:</span> <span class="s">deploy</span>
@@ -424,8 +424,8 @@
       <span class="na">MONGODB_PASSWORD</span><span class="pi">:</span> <span class="s">$</span>
       <span class="na">PORT</span><span class="pi">:</span> <span class="m">8080</span>
     <span class="na">steps</span><span class="pi">:</span>
-<span class="err">	</span>    <span class="pi">-</span> <span class="s">...</span>
-<span class="err">	</span>    <span class="s">- ...</span>
+      <span class="pi">-</span> <span class="s">...</span>
+      <span class="pi">-</span> <span class="s">...</span>
 </code></pre></div></div> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/17-480.webp 480w,/assets/img/2025-01-13-github-actions/17-800.webp 800w,/assets/img/2025-01-13-github-actions/17-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/17.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h2 id="service-containers">Service Containers</h2> <ul> <li>To host a isolated testing db inside the github action job instead of connecting to the prod db</li> </ul> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/18-480.webp 480w,/assets/img/2025-01-13-github-actions/18-800.webp 800w,/assets/img/2025-01-13-github-actions/18-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/18.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h3 id="using-service-with-container">Using Service with Container</h3> <ul> <li>Create a mongodb service inside node:16 container with network name as mongodb-service</li> </ul> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">jobs</span><span class="pi">:</span>
   <span class="na">test</span><span class="pi">:</span>
     <span class="na">environment</span><span class="pi">:</span> <span class="s">testing</span>
@@ -449,7 +449,7 @@
       <span class="na">another-service</span><span class="pi">:</span>
         <span class="s">...</span>
     <span class="na">steps</span><span class="pi">:</span>
-<span class="err">	</span>    <span class="pi">-</span> <span class="s">...</span>
+      <span class="pi">-</span> <span class="s">...</span>
 </code></pre></div></div> <aside> 💡 If job runs in container, then github actions will handle the networking between the container and service for you. Hence in above example, `MONGODB_CLUSTER_ADDRESS` can be set to the name of the service `mongodb-service` </aside> <h3 id="using-service-without-container">Using Service without container</h3> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">jobs</span><span class="pi">:</span>
   <span class="na">test</span><span class="pi">:</span>
     <span class="na">environment</span><span class="pi">:</span> <span class="s">testing</span>
@@ -464,14 +464,14 @@
       <span class="na">mongodb-service</span><span class="pi">:</span> <span class="c1"># Testing DB - will be deleted after job ends</span>
         <span class="na">image</span><span class="pi">:</span> <span class="s">mongo</span>
         <span class="na">ports</span><span class="pi">:</span> <span class="c1"># Need to open the mongodb port</span>
-<span class="err">	</span>        <span class="pi">-</span> <span class="s">27017:27017</span>
+          <span class="pi">-</span> <span class="s">27017:27017</span>
         <span class="na">env</span><span class="pi">:</span>
           <span class="na">MONGO_INITDB_ROOT_USERNAME</span><span class="pi">:</span> <span class="s">root</span>
           <span class="na">MONGO_INITDB_ROOT_PASSWORD</span><span class="pi">:</span> <span class="s">example</span>
       <span class="na">another-service</span><span class="pi">:</span>
         <span class="s">...</span>
     <span class="na">steps</span><span class="pi">:</span>
-<span class="err">	</span>    <span class="pi">-</span> <span class="s">...</span>
+      <span class="pi">-</span> <span class="s">...</span>
 </code></pre></div></div> <aside> 💡 If no containers are used, then the service port will need to be opened and changing the `MONGODB_CLUSTER_ADDRESS` </aside> <h1 id="custom-actions">Custom Actions</h1> <ul> <li>3 kinds of custom actions</li> </ul> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/19-480.webp 480w,/assets/img/2025-01-13-github-actions/19-800.webp 800w,/assets/img/2025-01-13-github-actions/19-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/19.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h2 id="composite-actions">Composite Actions</h2> <p>Stored in</p> <ol> <li>New repository of actions</li> <li>Locally within <code class="language-plaintext highlighter-rouge">.github/&lt;folder_name&gt;/&lt;action_name&gt;/action.yml</code> </li> </ol> <h3 id="example-custom-composite-action">Example (Custom Composite Action)</h3> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Get</span><span class="nv"> </span><span class="s">&amp;</span><span class="nv"> </span><span class="s">Cache</span><span class="nv"> </span><span class="s">Dependencies"</span>
 <span class="na">description</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Get</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">dependencies</span><span class="nv"> </span><span class="s">(via</span><span class="nv"> </span><span class="s">npm)</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">cache</span><span class="nv"> </span><span class="s">them."</span>
 <span class="na">inputs</span><span class="pi">:</span> <span class="c1"># Custom input for the action</span>
@@ -622,10 +622,10 @@
       <span class="pi">-</span> <span class="s">opened</span>
 <span class="na">jobs</span><span class="pi">:</span>
   <span class="na">assign-label</span><span class="pi">:</span>
-<span class="err">	</span>  <span class="na">permissions</span><span class="pi">:</span> <span class="c1"># RESTRICT PERMISSION. DEFAULT: FULL ACCESS ON EVERYTHING.</span>
-<span class="err">		</span>  <span class="na">issues</span><span class="pi">:</span> <span class="s">write</span>
-    <span class="s">runs-on</span><span class="err">:</span> <span class="s">ubuntu-latest</span>
-    <span class="s">steps</span><span class="err">:</span>
+    <span class="na">permissions</span><span class="pi">:</span> <span class="c1"># RESTRICT PERMISSION. DEFAULT: FULL ACCESS ON EVERYTHING.</span>
+      <span class="na">issues</span><span class="pi">:</span> <span class="s">write</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">steps</span><span class="pi">:</span>
       <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Assign label</span>
         <span class="na">if</span><span class="pi">:</span> <span class="s">contains(github.event.issue.title, 'bug')</span>
         <span class="na">run</span><span class="pi">:</span> <span class="pi">|</span>
@@ -637,26 +637,26 @@
               <span class="s">"labels": ["bug"]</span>
             <span class="s">}' \</span>
           <span class="s">--fail</span>
-</code></pre></div></div> <h3 id="secretsgithub_token">secrets.GITHUB_TOKEN</h3> <p>Token generated by github for the github API</p> <ul> <li>Gets revoked by the end of the job</li> <li>Permissions set in the yml will be the permission assigned to the GITHUB_TOKEN.</li> </ul> <h2 id="managing-more-permissions">Managing more permissions</h2> <p>Repository → Setting → Action → General</p> <h2 id="managing-secret-keys-for-3rd-party-platforms">Managing Secret Keys for 3rd-party platforms</h2> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Deploy site</span>
-<span class="na">		id</span><span class="pi">:</span> <span class="s">deploy</span>
-<span class="na">		uses</span><span class="pi">:</span> <span class="s">./.github/actions/deploy-s3-javascript</span>
-<span class="na">		env</span><span class="pi">:</span>
-<span class="err">		</span>  <span class="na">AWS_ACCESS_KEY_ID</span><span class="pi">:</span> <span class="s">$</span>
-<span class="na">		  AWS_SECRET_ACCESS_KEY</span><span class="pi">:</span> <span class="s">$</span>
+</code></pre></div></div> <h3 id="secretsgithub_token">secrets.GITHUB_TOKEN</h3> <p>Token generated by github for the github API</p> <ul> <li>Gets revoked by the end of the job</li> <li>Permissions set in the yml will be the permission assigned to the GITHUB_TOKEN.</li> </ul> <h2 id="managing-more-permissions">Managing more permissions</h2> <p>Repository → Setting → Action → General</p> <h2 id="managing-secret-keys-for-3rd-party-platforms">Managing Secret Keys for 3rd-party platforms</h2> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Deploy site</span>
+  <span class="na">id</span><span class="pi">:</span> <span class="s">deploy</span>
+  <span class="na">uses</span><span class="pi">:</span> <span class="s">./.github/actions/deploy-s3-javascript</span>
+  <span class="na">env</span><span class="pi">:</span>
+    <span class="na">AWS_ACCESS_KEY_ID</span><span class="pi">:</span> <span class="s">$</span>
+    <span class="na">AWS_SECRET_ACCESS_KEY</span><span class="pi">:</span> <span class="s">$</span>
 </code></pre></div></div> <ul> <li>Information like <code class="language-plaintext highlighter-rouge">AWS_ACCESS_KEY_ID</code> and <code class="language-plaintext highlighter-rouge">AWS_SECRET_ACCESS_KEY</code> are saved in the github action secrets <ul> <li>But still vulnerable to script injections</li> </ul> </li> <li>OpenID Connect can help to make it more secure <ul> <li>Dynamically gets credentials</li> <li>Requires setting up AWS IAM Role for this</li> <li>Uses <code class="language-plaintext highlighter-rouge">aws-actions/configure-aws-credentials</code> </li> <li>Do not need the <code class="language-plaintext highlighter-rouge">env</code> anymore</li> </ul> </li> </ul> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">job</span><span class="pi">:</span>
-<span class="err">	</span><span class="na">deploy</span><span class="pi">:</span>
-<span class="err">		</span><span class="na">permissions</span><span class="pi">:</span>
-<span class="err">			</span><span class="na">id-token</span><span class="pi">:</span> <span class="s">write</span> <span class="c1"># REQUIRED as default GITHUB_TOKEN is set to None for this</span>
-<span class="err">			</span><span class="na">contents</span><span class="pi">:</span> <span class="s">read</span>
-<span class="err">		</span><span class="s">...</span>
-<span class="na">		steps</span><span class="pi">:</span>
-<span class="err">			</span><span class="s">...</span>
-<span class="na">			- name</span><span class="pi">:</span> <span class="s">Get AWS Permissions</span>
-<span class="na">				uses</span><span class="pi">:</span> <span class="s">aws-actions/configure-aws-credentials@v1</span>
-<span class="na">				with</span><span class="pi">:</span>
-<span class="err">					</span><span class="na">role-to-assume</span><span class="pi">:</span> <span class="s">arn:aws:iam::...</span>
-<span class="na">					aws-region</span><span class="pi">:</span> <span class="s">...</span>
-<span class="err">			</span><span class="s">...</span>
+  <span class="na">deploy</span><span class="pi">:</span>
+    <span class="na">permissions</span><span class="pi">:</span>
+      <span class="na">id-token</span><span class="pi">:</span> <span class="s">write</span> <span class="c1"># REQUIRED as default GITHUB_TOKEN is set to None for this</span>
+      <span class="na">contents</span><span class="pi">:</span> <span class="s">read</span>
+    <span class="s">...</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="c1"># Do something above</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get AWS Permissions</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">aws-actions/configure-aws-credentials@v1</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">role-to-assume</span><span class="pi">:</span> <span class="s">arn:aws:iam::...</span>
+          <span class="na">aws-region</span><span class="pi">:</span> <span class="s">...</span>
+      <span class="s">...</span>
 </code></pre></div></div> </div> </article> <br> <hr> <br> <ul class="list-disc pl-8"></ul> <h2 class="text-3xl font-semibold mb-4 mt-12">Enjoy Reading This Article?</h2> <p class="mb-2">Here are some more articles you might like to read next:</p> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2025/terraform-notes/">Terraform Tutorial</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2025/docker-notes/">Docker Tutorial</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2025/airflow-notes/">Airflow Tutorial</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2025/databricks-data-engineer-associate/">Databricks DE Associate Notes</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2019/profiling-my-favourite-songs-on-spotify-through-clustering/">Profiling my favourite songs on Spotify through clustering</a> </li> </div> </div> </div> </div> <footer class="sticky-bottom mt-5" role="contentinfo"> <div class="container"> © Copyright 2025 John Koh. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. </div> </footer> <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> <script src="/assets/js/bootstrap.bundle.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?a0db7e5d5c70cc3252b3138b0c91dcaf" type="text/javascript"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/js/zoom.js?85ddb88934d28b74e78031fd54cf8308"></script> <script defer src="/assets/js/bootstrap-toc.min.js?c82ff4de8b0955d6ff14f5b05eed7eb6"></script> <script src="/assets/js/no_defer.js?2781658a0a2b13ed609542042a859126"></script> <script defer src="/assets/js/common.js?e0514a05c5c95ac1a93a8dfd5249b92e"></script> <script defer src="/assets/js/copy_code.js?12775fdf7f95e901d7119054556e495f" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?d9f17b6adc2311cbabd747f4538bb15f"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/js/mathjax-setup.js?70d799092f862ad98c7876aa47712e20"></script> <script defer src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6" crossorigin="anonymous"></script> <script async src="https://www.googletagmanager.com/gtag/js?id=G-57NGLGRVZL"></script> <script defer src="/assets/js/google-analytics-setup.js?12374742c4b1801ba82226e617af7e2d"></script> <script defer src="/assets/js/progress-bar.js?2f30e0e6801ea8f5036fa66e1ab0a71a" type="text/javascript"></script> <script src="/assets/js/vanilla-back-to-top.min.js?f40d453793ff4f64e238e420181a1d17"></script> <script>
     addBackToTop();
   </script> </body> </html>
