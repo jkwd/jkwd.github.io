@@ -15,6 +15,7 @@ Run the test yourself: [Google Lighthouse PageSpeed Insights](https://pagespeed.
 Run the test yourself: [Google Lighthouse PageSpeed Insights](https://pagespeed.web.dev/report?url=https%3A%2F%2Falshedivat.github.io%2Fal-folio%2F&form_factor=mobile)
 
 ## Original Repository
+
 [al-folio](https://alshedivat.github.io/al-folio/)
 
 **A simple, clean, and responsive [Jekyll](https://jekyllrb.com/) theme for academics.**

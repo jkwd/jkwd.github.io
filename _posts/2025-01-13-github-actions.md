@@ -159,15 +159,15 @@ Event Listeners operate on an OR condition within the branch/path and AND condit
 ```yaml
 jobs:
   build:
-      needs: test
-      runs-on: ubuntu-latest
-      steps:
-        - name: Get code
-          uses: actions/checkout@v3
-        - name: Install dependencies
-          run: npm ci
-        - name: Build website
-          run: npm run build
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm ci
+      - name: Build website
+        run: npm run build
 ```
 
 - Requres the `runs-on` to specify the type of machine the steps will run on
@@ -308,24 +308,24 @@ https://github.com/actions/cache/blob/main/examples.md#node---npm
 ```yaml
 test:
   # Do something above
-    - name: Cache dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.npm
-        key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
-    - name: Install dependencies
-      run: npm ci
-    - ...
+  - name: Cache dependencies
+    uses: actions/cache@v3
+    with:
+      path: ~/.npm
+      key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+  - name: Install dependencies
+    run: npm ci
+  - ...
 build:
   # Do something above
-    - name: Cache dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.npm
-        key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
-    - name: Install dependencies
-      run: npm ci
-    - ...
+  - name: Cache dependencies
+    uses: actions/cache@v3
+    with:
+      path: ~/.npm
+      key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+  - name: Install dependencies
+    run: npm ci
+  - ...
 ```
 
 {% include figure.liquid loading="eager" path="assets/img/2025-01-13-github-actions/7.png" class="img-fluid rounded z-depth-1" %}
@@ -358,7 +358,6 @@ jobs:
         run: npm start & npx wait-on http://127.0.0.1:$PORT
   deploy:
     # Previous Job ENV_VARs not accessible
-
 ```
 
 # Secrets
@@ -627,7 +626,7 @@ jobs:
   test:
     environment: testing
     runs-on: ubuntu-latest
-    container:  # DEFINE HERE. HOSTED ON ubuntu-latest
+    container: # DEFINE HERE. HOSTED ON ubuntu-latest
       image: node:16
       env: # THIS IS ENV_VAR FOR IMAGE AND NOT STEPS
         VAR_1: val_1
@@ -659,7 +658,7 @@ jobs:
   test:
     environment: testing
     runs-on: ubuntu-latest
-    container:  # DEFINE HERE. HOSTED ON ubuntu-latest
+    container: # DEFINE HERE. HOSTED ON ubuntu-latest
       image: node:16
       env: # THIS IS ENV_VAR FOR IMAGE AND NOT STEPS
         VAR_1: VAL_1
@@ -675,8 +674,7 @@ jobs:
         env:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: example
-      another-service:
-        ...
+      another-service: ...
     steps:
       - ...
 ```
@@ -706,8 +704,7 @@ jobs:
         env:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: example
-      another-service:
-        ...
+      another-service: ...
     steps:
       - ...
 ```
