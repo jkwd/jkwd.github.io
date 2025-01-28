@@ -222,7 +222,8 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=password
     volumes:
-      - mongo-data:/data/db #<REFERENCE NAME:CONTAINER DIRECTORY>
+      #<REFERENCE NAME:CONTAINER DIRECTORY>
+      - mongo-data:/data/db
 
   mongo-express: # <CONTAINER NAME>
     image: mongo-express # <IMAGE : Default is from Public Docker Hub>
