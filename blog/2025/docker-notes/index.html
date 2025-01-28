@@ -54,9 +54,10 @@ mongo-express
       <span class="pi">-</span> <span class="s">MONGO_INITDB_ROOT_USERNAME=admin</span>
       <span class="pi">-</span> <span class="s">MONGO_INITDB_ROOT_PASSWORD=password</span>
     <span class="na">volumes</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">mongo-data:/data/db</span> <span class="c1">#&lt;REFERENCE NAME:CONTAINER DIRECTORY&gt;</span>
+      <span class="c1">#&lt;REFERENCE NAME:CONTAINER DIRECTORY&gt;</span>
+      <span class="pi">-</span> <span class="s">mongo-data:/data/db</span>
 
-<span class="err">  </span><span class="na">mongo-express</span><span class="pi">:</span> <span class="c1"># &lt;CONTAINER NAME&gt;</span>
+  <span class="na">mongo-express</span><span class="pi">:</span> <span class="c1"># &lt;CONTAINER NAME&gt;</span>
     <span class="na">image</span><span class="pi">:</span> <span class="s">mongo-express</span> <span class="c1"># &lt;IMAGE : Default is from Public Docker Hub&gt;</span>
     <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span> <span class="c1"># fixes MongoNetworkError when mongodb is not ready when mongo-express starts</span>
     <span class="na">ports</span><span class="pi">:</span>
