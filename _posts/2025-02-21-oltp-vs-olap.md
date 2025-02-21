@@ -11,6 +11,7 @@ toc:
 ---
 
 # Setup
+
 1. git clone the repo
 2. Install [Docker](https://www.docker.com/get-started/)
 3. Check if docker compose comes installed with Docker by running `docker compose version`
@@ -24,28 +25,34 @@ docker compose up
 ```
 
 # Data Source
+
 We are using the [TPC-H](https://www.tpc.org/tpch/) data which is a decision support benchmark. It consists of a suite of business-oriented ad hoc queries and concurrent data modifications.
 
 # Experiment
+
 We are going to benchmark the performance of an Online Transaction Processing (OLTP) database vs an Online analytical processing (OLAP) database on business-oriented query performance as well as transactional performance:
+
 1. business-oriented ad hoc query by [TPC-H](https://docs.starrocks.io/docs/benchmarking/TPC-H_Benchmarking/#5-query-sql-and-create-table-statements)
 2. INSERT N records
 
 The OLTP database we are using for the experiment is a Postgres database. The OLAP database we are using is DuckDB.
 
 # Hypothesis
+
 The hypothesis is that the OLTP database will perform better for transactional operations such as INSERT/UPDATE/DELETE while the OLAP database will perform better for the business-oriented ad hoc query.
 
 # Row vs Column oriented Storage
+
 ## Row oriented storage
+
 In a row-oriented storage, each row in a table is stored sequentially on the disk.
 
-| id | Name | Country |
-| -- | ---- | ------- |
-| 1 | Alice | USA |
-| 2 | Bob | Germany |
-| 3 | Charlie | Australia |
-| 4 | David | Japan |
+| id  | Name    | Country   |
+| --- | ------- | --------- |
+| 1   | Alice   | USA       |
+| 2   | Bob     | Germany   |
+| 3   | Charlie | Australia |
+| 4   | David   | Japan     |
 
 Given the example table above, a row oriented storage will be stored as:
 
@@ -59,14 +66,15 @@ However, analytics queries will be poor as the column we need will be spread acr
 E.g. If we want to know the number of people in each country, we technically only need the `Country` column to count. This results in a full table scan just to get the results we want.
 
 ## Column oriented storage
+
 In a column-oriented storage, each row in a table is stored sequentially on the disk.
 
-| id | Name | Country |
-| -- | ---- | ------- |
-| 1 | Alice | USA |
-| 2 | Bob | Germany |
-| 3 | Charlie | Australia |
-| 4 | David | Japan |
+| id  | Name    | Country   |
+| --- | ------- | --------- |
+| 1   | Alice   | USA       |
+| 2   | Bob     | Germany   |
+| 3   | Charlie | Australia |
+| 4   | David   | Japan     |
 
 Given the example table above, a column oriented storage will be stored as:
 
@@ -77,12 +85,15 @@ This makes an column oriented storage good for analytical queries. Going back to
 On the other hand, column oriented storage is poor for transactional processing which usually does an operation on 1 row. For example, if you wanted to add a row of data, each value from the new row has to be added to the correct block of the existing database. This requires accessing all the blocks. Column oriented storage will prefer doing operations in bulk (e.g. bulk insert/update).
 
 # Result
+
 ## Query performance
+
 {% include figure.liquid loading="eager" path="assets/img/2025-02-21-oltp-vs-olap/1.png" class="img-fluid rounded z-depth-1" %}
 
 DuckDB executed all the queries in less than a second. Postgres on the other hand took at least 3 seconds for the query execution to complete. In fact 1 of the query took longer than 50 seconds!
 
 ## INSERT performance
+
 {% include figure.liquid loading="eager" path="assets/img/2025-02-21-oltp-vs-olap/2.png" class="img-fluid rounded z-depth-1" %}
 
 Postgres is about 4X faster when inserting records as compared to DuckDB.
