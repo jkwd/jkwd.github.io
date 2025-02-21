@@ -23,18 +23,7 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/about/";
           },
-        },{id: "post-benchmarking-oltp-vs-olap",
-      
-        title: "Benchmarking OLTP vs OLAP",
-      
-      description: "Simple experiment on OLTP and OLAP databases using TPC-H dataset",
-      section: "Posts",
-      handler: () => {
-        
-          window.location.href = "/blog/2025/oltp-vs-olap/";
-        
-      },
-    },{id: "post-github-actions-tutorial",
+        },{id: "post-github-actions-tutorial",
       
         title: "Github Actions Tutorial",
       
