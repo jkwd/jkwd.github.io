@@ -12,7 +12,7 @@ toc:
 
 # Setup
 
-1. git clone the repo
+1. git clone the [repo](https://github.com/jkwd/oltp_vs_olap)
 2. Install [Docker](https://www.docker.com/get-started/)
 3. Check if docker compose comes installed with Docker by running `docker compose version`
 4. Install [docker compose](https://docs.docker.com/compose/install/)
@@ -21,6 +21,7 @@ toc:
 ```
 git clone https://github.com/jkwd/oltp_vs_olap.git
 cd oltp_vs_olap
+docker compose version
 docker compose up
 ```
 
