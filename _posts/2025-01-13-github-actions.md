@@ -130,9 +130,7 @@ jobs:
           echo "${{ toJSON(github) }}"
 ```
 
-<aside>
-💡 YML file needs to be stored in `.github/workflows` directory
-</aside>
+> 💡 YML file needs to be stored in `.github/workflows` directory
 
 # Workflow
 
@@ -149,10 +147,8 @@ jobs:
 - `push`
   - Allows for branches/path targetted
 
-<aside>
-💡 branches and paths have the compliment version (e.g. branch-ignore/path-ignore).
-Event Listeners operate on an OR condition within the branch/path and AND condition betwenn branch/path
-</aside>
+> 💡 branches and paths have the compliment version (e.g. branch-ignore/path-ignore).
+> Event Listeners operate on an OR condition within the branch/path and AND condition betwenn branch/path
 
 # Jobs
 
@@ -396,9 +392,7 @@ jobs:
     # Previous Job ENV_VARs not accessible
 ```
 
-<aside>
-💡 When echo the environment variable with secrets, it’ll hide the info and print `***`
-</aside>
+> 💡 When echo the environment variable with secrets, it’ll hide the info and print `***`
 
 ## Environment Secrets
 
@@ -458,9 +452,7 @@ jobs:
     path: test.json
 ```
 
-<aside>
-💡 `failure()` is required in order to run the Upload test report step
-</aside>
+> 💡 `failure()` is required in order to run the Upload test report step
 
 {% include figure.liquid loading="eager" path="assets/img/2025-01-13-github-actions/13.png" class="img-fluid rounded z-depth-1" %}
 
@@ -588,9 +580,7 @@ jobs:
         run: echo "step-result=success" >> $GITHUB_OUTPUT
 ```
 
-<aside>
-💡 on needs to be workflow_call
-</aside>
+> 💡 on needs to be workflow_call
 
 ```yaml
 name: Use Reusable
@@ -679,9 +669,7 @@ jobs:
       - ...
 ```
 
-<aside>
-💡 If job runs in container, then github actions will handle the networking between the container and service for you. Hence in above example, `MONGODB_CLUSTER_ADDRESS` can be set to the name of the service `mongodb-service`
-</aside>
+> 💡 If job runs in container, then github actions will handle the networking between the container and service for you. Hence in above example, `MONGODB_CLUSTER_ADDRESS` can be set to the name of the service `mongodb-service`
 
 ### Using Service without container
 
@@ -709,9 +697,7 @@ jobs:
       - ...
 ```
 
-<aside>
-💡 If no containers are used, then the service port will need to be opened and changing the `MONGODB_CLUSTER_ADDRESS`
-</aside>
+> 💡 If no containers are used, then the service port will need to be opened and changing the `MONGODB_CLUSTER_ADDRESS`
 
 # Custom Actions
 
@@ -791,9 +777,7 @@ jobs:
     - Requires nodeJS installed in your system
   - `npm install @actions/core @actions/github @actions/exec`
 
-<aside>
-💡 Ensure all files in node_modules in the directory is not gitignored
-</aside>
+> 💡 Ensure all files in node_modules in the directory is not gitignored
 
 ### action.yml
 
@@ -882,9 +866,7 @@ jobs:
           echo 'URL: ${{ steps.deploy.outputs.website-url }}'
 ```
 
-<aside>
-💡 JS Custom action requires user to do `actions/checkout` if the action is a local custom action
-</aside>
+> 💡 JS Custom action requires user to do `actions/checkout` if the action is a local custom action
 
 ## Docker Action
 
@@ -911,9 +893,7 @@ runs:
   image: "Dockerfile"
 ```
 
-<aside>
-💡 gh generates ENV_VAR for the inputs with prefix `INPUT_*`. [SEE BELOW]
-</aside>
+> 💡 gh generates ENV*VAR for the inputs with prefix `INPUT*\*`. [SEE BELOW]
 
 ```python
 bucket = os.environ['INPUT_BUCKET']
@@ -921,9 +901,7 @@ bucket_region = os.environ['INPUT_BUCKET-REGION']
 dist_folder = os.environ['INPUT_DIST-FOLDER']
 ```
 
-<aside>
-💡 outputs are handled by using the print of the language. E.g. python print() [SEE BELOW]
-</aside>
+> 💡 outputs are handled by using the print of the language. E.g. python print() [SEE BELOW]
 
 ```python
 with open(os.environ['GITHUB_OUTPUT'], 'a') as gh_output:

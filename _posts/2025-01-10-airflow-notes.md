@@ -127,10 +127,7 @@ forex_processing = SparkSubmitOperator(
   - Cron (0 \* \* \* \*) - preferred
   - `datetime.timedelta(days=1))`
 
-<aside>
-💡 A DAG starts being scheduled from `start_date` and triggered after every `schedule_interval`
-
-</aside>
+> 💡 A DAG starts being scheduled from `start_date` and triggered after every `schedule_interval`
 
 - execution_date - beginning of the processed period
   - Given `start_date=2019-09-19T02:00:00 UTC` and `schedule_interval=every hour`
@@ -153,10 +150,7 @@ forex_processing = SparkSubmitOperator(
 - Naive - datetime object without the tzinfo
 - Aware - datetime object with tzinfo
 
-<aside>
-💡 Always use Aware. Note: datetime obj without timezone IS NOT UTC
-
-</aside>
+> 💡 Always use Aware. Note: datetime obj without timezone IS NOT UTC
 
 ```python
 local_tz = pendulum.timezone("Europe/Paris")

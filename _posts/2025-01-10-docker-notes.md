@@ -47,9 +47,7 @@ docker run postgres:10.10
 If the image was not pulled earlier, Docker will pull and run the image afterwards. However this will run in attached mode and the terminal needs to maintain in this state.
 {% include figure.liquid loading="eager" path="assets/img/2025-01-10-docker-notes/1.png" class="img-fluid rounded z-depth-1" %}
 
-<aside>
-💡 By using Ctrl + C, this will stop the container
-</aside>
+> 💡 By using Ctrl + C, this will stop the container
 
 <br>
 
@@ -67,10 +65,7 @@ docker run -d postgress:10.10
 
 Sometimes if we require to run more than 1 application in the same host machine, they might conflict with using the same port. To solve this, we will need to change the port of the local machine to point to as shown in the example.
 
-<aside>
-💡 Container ports can be the same as they are the image ports. But as long s the host machine ports are not used twice then it is ok.
-
-</aside>
+> 💡 Container ports can be the same as they are the image ports. But as long as the host machine ports are not used twice then it is ok.
 
 To port forward, we may use the following command
 
@@ -240,10 +235,7 @@ volumes:
     driver: local # <additional info for docker to create a physical storage locally>
 ```
 
-<aside>
-💡 Do not need to specify network as containers in the same yaml file are in the same network.
-
-</aside>
+> 💡 Do not need to specify network as containers in the same yaml file are in the same network.
 
 ## Start containers using docker-compose
 
@@ -259,10 +251,7 @@ docker-compose -d -f mongo.yaml up
 docker-compose -f mongo.yaml down
 ```
 
-<aside>
-💡 This also removes the network
-
-</aside>
+> 💡 This also removes the network
 
 # Dockerfile
 

@@ -247,10 +247,7 @@ output "server_public_ip" {
 
 {% include figure.liquid loading="eager" path="assets/img/2025-01-10-terraform-notes/13.png" class="img-fluid rounded z-depth-1" %}
 
-<aside>
-💡 Be careful when you want to add new outputs and see the outputs. Not a good idea to use terraform apply as that might make changes on production side.
-
-</aside>
+> 💡 Be careful when you want to add new outputs and see the outputs. Not a good idea to use terraform apply as that might make changes on production side.
 
 ## Target Resources
 

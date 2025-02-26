@@ -84,9 +84,7 @@ RETURN <expression>
 
 To give all permission, use `ALL PRIVILEGES`
 
-<aside>
-💡 Insert, Update, Delete are combined to `Modify`
-</aside>
+> 💡 Insert, Update, Delete are combined to `Modify`
 
 ## Usage Privilege
 
