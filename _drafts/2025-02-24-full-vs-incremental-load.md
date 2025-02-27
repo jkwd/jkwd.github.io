@@ -40,44 +40,6 @@ A Full Load should be done preferably when we know the traffic to the app and tr
 1. Ingestion Speed: Slow for large dataset as it requires a full scan on the source data
 2. Stress on source system: Resource consumption (e.g. CPU) can spike during a full load especially if the data is large and may impact other applications that are running.
 
-### Example
-
-Assuming we have an orders table in our OLTP where an order has some status from `Processing -> Shipped -> Delivered`, we can see that order `id=1` changed from `Processing` to `Delivered` between the 2 days. The destination table has a 1-to-1 copy of the source table.
-
-#### Date: 2024-01-02
-
-Source Table: public.orders
-
-| id  | date       | total_amount | status     |
-| --- | ---------- | ------------ | ---------- |
-| 1   | 2024-01-01 | 111.12       | Processing |
-| 2   | 2024-01-01 | 98.10        | Shipped    |
-
-Destination Table: public.orders
-
-| id  | date       | total_amount | status     |
-| --- | ---------- | ------------ | ---------- |
-| 1   | 2024-01-01 | 111.12       | Processing |
-| 2   | 2024-01-01 | 98.10        | Shipped    |
-
-#### Date: 2024-01-03
-
-Source Table: public.orders
-
-| id  | date       | total_amount | status     |
-| --- | ---------- | ------------ | ---------- |
-| 1   | 2024-01-01 | 111.12       | Delivered  |
-| 2   | 2024-01-01 | 98.10        | Delivered  |
-| 3   | 2024-01-02 | 15.00        | Processing |
-
-Destination Table: public.orders
-
-| id  | date       | total_amount | status     |
-| --- | ---------- | ------------ | ---------- |
-| 1   | 2024-01-01 | 111.12       | Delivered  |
-| 2   | 2024-01-01 | 98.10        | Delivered  |
-| 3   | 2024-01-02 | 15.00        | Processing |
-
 ## Incremental Load
 
 In an incremental load strategy, only the updated/newest data from the source system are loaded to the destination system. This results in lesser data being transferred between them which improves speed and reduces stress.
@@ -114,20 +76,9 @@ where updated_at > last_ingested_time
 
 We can keep track of the last ingested time and identify new/updated records past the time.
 
-```sql
-select *
-from source_table
-where updated_at > (
-  select max(updated_at)
-  from target_table
-)
-```
-
-We can also reference the latest updated time from the target table to get any new/updated records from the source.
-
 If you want to indicate if a row is an INSERT or and UPDATE, then you may need to modify the setup by changing the query or adding new columns such as `created_at`.
 
-In this approach, it'll be difficult to identify records that is deleted (see Red) in the source system unless we do some comparison between the source and destination tables to identify primary keys that do not exist in the source.
+In this approach, it'll be difficult to identify records that is deleted (see Red) in the source system unless we do some comparison between the source and destination tables to identify primary keys that do not exist in the source. This is what we call a soft delete approach where we can mark the record in the target table with an `is_deleted` flag.
 
 #### Log based/Change data capture (CDC) approach
 
@@ -136,3 +87,12 @@ In this approach, it'll be difficult to identify records that is deleted (see Re
 This method is applicable to source databases such as Postgres which contains transaction logs. These transaction logs store all events that allows the databse to be recovered in the event of a crash. We can utilise this logs to capture the transactions (e.g. insert/update/delete) and propagate it to the destination system. The data changes are captured in real time by connecting a tool to capture the data changes. This method will not require any scanning of the source database. However the additional complexity may come from the additional tool and configurations to the database for this to work.
 
 ## Summary table
+
+|                  | Full Load                            | Incremental Load                                                   |
+| ---------------- | ------------------------------------ | ------------------------------------------------------------------ |
+| Data Volume      | Entire dataset overwritten each time | Only changed data needs to be processed (insert, update, delete)   |
+| Frequency        | Less frequent                        | More frequent                                                      |
+| Resource Usage   | Higher                               | Lower                                                              |
+| Latency/Speed    | Slower                               | Faster                                                             |
+| Complexity       | Simpler                              | Complex                                                            |
+| Data consistency | Consistent since its an overwrite    | Requries reconciliation via some logic and risk being inconsistent |
