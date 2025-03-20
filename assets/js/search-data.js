@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/about/";
           },
-        },{id: "post-benchmarking-oltp-vs-olap",
+        },{id: "post-full-vs-incremental-load",
+      
+        title: "Full vs incremental load",
+      
+      description: "Explaining pros and cons of Full Load vs Incremental Load",
+      section: "Posts",
+      handler: () => {
+        
+          window.location.href = "/blog/2025/full-vs-incremental-load/";
+        
+      },
+    },{id: "post-benchmarking-oltp-vs-olap",
       
         title: "Benchmarking OLTP vs OLAP",
       
