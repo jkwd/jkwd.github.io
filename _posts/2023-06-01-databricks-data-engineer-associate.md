@@ -7,7 +7,7 @@ tags: data_engineering databricks
 categories: learning
 
 toc:
-  sidebar: left
+  beginning: true
 ---
 
 # Auto generate the column when create table

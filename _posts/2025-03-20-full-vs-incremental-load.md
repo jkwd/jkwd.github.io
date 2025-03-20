@@ -7,7 +7,7 @@ tags: data_engineering ingestion
 categories: learning
 
 toc:
-  sidebar: left
+  beginning: true
 ---
 
 # Introduction

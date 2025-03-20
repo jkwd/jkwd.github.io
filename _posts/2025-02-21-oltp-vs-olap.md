@@ -7,7 +7,7 @@ tags: data_engineering
 categories: project
 
 toc:
-  sidebar: left
+  beginning: true
 ---
 
 # Setup

@@ -7,7 +7,7 @@ tags: data_engineering infra docker
 categories: learning
 
 toc:
-  sidebar: left
+  beginning: true
 ---
 
 # Tutorial Source

@@ -7,7 +7,7 @@ tags: data_engineering orchestrator
 categories: learning
 
 toc:
-  sidebar: left
+  beginning: true
 ---
 
 # Airflow CLI

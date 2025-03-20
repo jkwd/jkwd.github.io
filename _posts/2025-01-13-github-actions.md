@@ -7,7 +7,7 @@ tags: data_engineering github_actions cicd
 categories: learning
 
 toc:
-  sidebar: left
+  beginning: true
 ---
 
 # Example

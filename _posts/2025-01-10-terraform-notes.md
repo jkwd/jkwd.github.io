@@ -7,7 +7,7 @@ tags: data_engineering infra terraform
 categories: learning
 
 toc:
-  sidebar: left
+  beginning: true
 ---
 
 # Setup
