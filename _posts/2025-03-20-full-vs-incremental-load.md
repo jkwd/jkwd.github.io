@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Full vs incremental load
-date: 2025-02-26 00:00:00
+date: 2025-03-20 00:00:00
 description: Explaining pros and cons of Full Load vs Incremental Load
 tags: data_engineering ingestion
 categories: learning
@@ -64,7 +64,7 @@ Incremental Load can also be otherwise known as Change Data Capture (CDC) or Del
 
 #### Timestamp based approach
 
-{% include figure.liquid loading="eager" path="assets/img/2025-02-24-full-vs-incremental-load/1.png" class="img-fluid rounded z-depth-1" %}
+{% include figure.liquid loading="eager" path="assets/img/2025-03-20-full-vs-incremental-load/1.png" class="img-fluid rounded z-depth-1" %}
 
 In a timestamp based approach, the source table will need to have a timestamp column to reference, usually an `updated_at` column. Whenever a new record is added or an existing record (see Green) is updated in the source database, the `updated_at` column will reflect the latest timestamp. This allows us to keep track on the records that are updated after the last incremental load.
 
@@ -82,7 +82,7 @@ In this approach, it'll be difficult to identify records that is deleted (see Re
 
 #### Log based/Change data capture (CDC) approach
 
-{% include figure.liquid loading="eager" path="assets/img/2025-02-24-full-vs-incremental-load/2.png" class="img-fluid rounded z-depth-1" %}
+{% include figure.liquid loading="eager" path="assets/img/2025-03-20-full-vs-incremental-load/2.png" class="img-fluid rounded z-depth-1" %}
 
 This method is applicable to source databases such as Postgres which contains transaction logs. These transaction logs store all events that allows the databse to be recovered in the event of a crash. We can utilise this logs to capture the transactions (e.g. insert/update/delete) and propagate it to the destination system. The data changes are captured in real time by connecting a tool to capture the data changes. This method will not require any scanning of the source database. However the additional complexity may come from the additional tool and configurations to the database for this to work.
 
