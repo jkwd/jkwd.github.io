@@ -12,7 +12,7 @@ toc:
 
 # Introduction
 
-In this [article](../oltp-vs-olap), we explored Online Transaction Processing (OLTP) database vs an Online analytical processing (OLAP) database and their purposes. We covered the idea that OLTP are meant for daily operations such as e-commerce transactions, where there is large volume of single transactions happening at any point in time, while OLAP are meant for analytical use cases.
+In this [article]({% post_url 2025-02-21-oltp-vs-olap %}), we explored Online Transaction Processing (OLTP) database vs an Online analytical processing (OLAP) database and their purposes. We covered the idea that OLTP are meant for daily operations such as e-commerce transactions, where there is large volume of single transactions happening at any point in time, while OLAP are meant for analytical use cases.
 
 Although we can technically still perform business-oriented queries on OLTP databases accepting the fact that it's slower, its also not recommended as we do not want to overload the database and risk having an outage. The OLTP database is what powers the webapp/app UI that the end users interface with and bringing the OLTP database down will be detrimental to the company.
 
