@@ -193,7 +193,7 @@ Now let’s see how our clusters look like on a 2-D and 3-D scatter plot.
 
 The points in the 2-D scatter plot overlaps with each other and may not look like the clustering was done well. However if we were to view it from a 3-D perspective, we can see the clusters better.
 
-Let’s try another method called t-Distributed Stochastic Neighbor Embedding(t-SNE). t-SNE performs well for visualizing high dimension data. For more details, you may read this <a href="https://www.datacamp.com/tutorial/introduction-t-sne">tutorial</a> by datacamp.
+Let’s try another method called t-Distributed Stochastic Neighbor Embedding(t-SNE). t-SNE performs well for visualizing high dimension data. For more details, you may read this [tutorial](https://www.datacamp.com/tutorial/introduction-t-sne) by datacamp.
 
 <div class="col-sm-9 mx-auto">
 {% include figure.liquid loading="eager" path="assets/img/2019-02-17-profiling-my-favourite-songs-on-spotify-through-clustering/10.png" class="img-fluid rounded z-depth-1" %}
