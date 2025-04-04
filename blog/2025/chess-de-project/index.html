@@ -1,0 +1,416 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> Chess DE Project | John Koh </title> <meta name="author" content="John Koh"> <meta name="description" content="Chess Dashboard Data Engineering Project using Dagster, DuckDB, dlt, dbt"> <link rel="stylesheet" href="/assets/css/bootstrap.min.css?a4b3f509e79c54a512b890d73235ef04"> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/css/mdb.min.css" integrity="sha256-jpjYvU3G3N6nrrBwXJoVEYI/0zw8htfFnhT9ljN3JJw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="/assets/css/academicons.min.css?f0b7046b84e425c55f3463ac249818f5"> <link defer rel="stylesheet" href="/assets/css/scholar-icons.css?62b2ac103a88034e6882a5be5f3e2772"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?6b8f493672acdc2dec9dd24ea9f5b855" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="/assets/img/jk.ico?17701e4c193bcbbeb8562ecc8617eb58"> <link rel="stylesheet" href="/assets/css/main.css?d41d8cd98f00b204e9800998ecf8427e"> <link rel="canonical" href="https://jkwd.github.io/blog/2025/chess-de-project/"> <script src="/assets/js/theme.js?9a0c749ec5240d9cda97bc72359a72c0"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav sticky-bottom-footer"> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">John</span> Koh </a> <button class="navbar-toggler collapsed ml-auto" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse text-right" id="navbarNav"> <ul class="navbar-nav ml-auto flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/"> </a> </li> <li class="nav-item active"> <a class="nav-link" href="/index.html">blog </a> </li> <li class="nav-item "> <a class="nav-link" href="/about/">About </a> </li> <li class="toggle-container"> <button id="light-toggle" title="Change theme"> <i class="ti ti-sun-moon" id="light-toggle-system"></i> <i class="ti ti-moon-filled" id="light-toggle-dark"></i> <i class="ti ti-sun-filled" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="post"> <header class="post-header"> <h1 class="post-title">Chess DE Project</h1> <p class="post-meta"> Created on April 03, 2025 </p> <p class="post-tags"> <a href="/blog/2025"> <i class="fa-solid fa-calendar fa-sm"></i> 2025 </a>   ·   <a href="/blog/tag/data-engineering"> <i class="fa-solid fa-hashtag fa-sm"></i> data_engineering</a>   <a href="/blog/tag/ingestion"> <i class="fa-solid fa-hashtag fa-sm"></i> ingestion</a>   <a href="/blog/tag/transformation"> <i class="fa-solid fa-hashtag fa-sm"></i> transformation</a>   <a href="/blog/tag/docker"> <i class="fa-solid fa-hashtag fa-sm"></i> docker</a>   ·   <a href="/blog/category/project"> <i class="fa-solid fa-tag fa-sm"></i> project</a> </p> </header> <article class="post-content"> <div id="table-of-contents"> <ul id="toc" class="section-nav"> <li class="toc-entry toc-h1"> <a href="#introduction">Introduction</a> <ul> <li class="toc-entry toc-h2"><a href="#architecture">Architecture</a></li> <li class="toc-entry toc-h2"><a href="#architecture-diagram">Architecture Diagram</a></li> <li class="toc-entry toc-h2"><a href="#project-structure">Project Structure</a></li> <li class="toc-entry toc-h2"> <a href="#running-chess-dashboard">Running Chess Dashboard</a> <ul> <li class="toc-entry toc-h3"><a href="#run-locally">Run locally</a></li> <li class="toc-entry toc-h3"><a href="#github-codespaces">Github Codespaces</a></li> <li class="toc-entry toc-h3"><a href="#running-dagster-job">Running Dagster Job</a></li> </ul> </li> </ul> </li> <li class="toc-entry toc-h1"> <a href="#implementation">Implementation</a> <ul> <li class="toc-entry toc-h2"><a href="#dagster-as-an-orchestrator">Dagster as an Orchestrator</a></li> <li class="toc-entry toc-h2"><a href="#duckdb-as-the-data-warehouse">DuckDB as the Data Warehouse</a></li> <li class="toc-entry toc-h2"> <a href="#ingestion-using-dltdagster">Ingestion using dlt+dagster</a> <ul> <li class="toc-entry toc-h3"><a href="#configuring-the-source">Configuring the Source</a></li> <li class="toc-entry toc-h3"><a href="#integrating-dlt-with-dagster">Integrating dlt with dagster</a></li> </ul> </li> <li class="toc-entry toc-h2"> <a href="#transformation-using-dbtdagster">Transformation using dbt+dagster</a> <ul> <li class="toc-entry toc-h3"><a href="#configuring-the-dbt-project">Configuring the dbt project</a></li> <li class="toc-entry toc-h3"><a href="#using-python-udfs">Using python UDFs</a></li> <li class="toc-entry toc-h3"><a href="#integrating-dbt-with-dagster">Integrating dbt with dagster</a></li> </ul> </li> <li class="toc-entry toc-h2"><a href="#dagster-definitions-to-integrate-dltdbt-into-dagster">Dagster definitions to integrate dlt+dbt into Dagster</a></li> <li class="toc-entry toc-h2"><a href="#deploying-dagster-on-docker">Deploying Dagster on Docker</a></li> <li class="toc-entry toc-h2"><a href="#streamlit-dashboard">Streamlit Dashboard</a></li> <li class="toc-entry toc-h2"><a href="#ci-checks">CI Checks</a></li> </ul> </li> </ul> </div> <hr> <div id="markdown-content"> <h1 id="introduction">Introduction</h1> <p>This is a data engineering project that ingests data from Chess.com API into DuckDB, transforms the data using dbt on DuckDB and visualising the results on a Streamlit dashboard.</p> <h2 id="architecture">Architecture</h2> <p>The data engineering project stack contains the following:</p> <ol> <li> <a href="https://dlthub.com/" rel="external nofollow noopener" target="_blank">dltHub</a>: Ingestion Layer to load the data into the data warehouse</li> <li> <a href="https://dagster.io/" rel="external nofollow noopener" target="_blank">Dagster</a>: To schedule and orchestrate the DAGs</li> <li> <a href="https://www.postgresql.org/" rel="external nofollow noopener" target="_blank">Postgres</a>: To store and persist Dagster details</li> <li> <a href="https://duckdb.org/" rel="external nofollow noopener" target="_blank">DuckDB</a>: Data Warehouse</li> <li> <a href="https://streamlit.io/" rel="external nofollow noopener" target="_blank">Streamlit</a>: Dashboard Layer</li> </ol> <h2 id="architecture-diagram">Architecture Diagram</h2> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-04-03-chess-de-project/1-480.webp 480w,/assets/img/2025-04-03-chess-de-project/1-800.webp 800w,/assets/img/2025-04-03-chess-de-project/1-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-04-03-chess-de-project/1.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h2 id="project-structure">Project Structure</h2> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.
+├── chess_dagster
+│   ├── chess_dbt
+│   ├──   ├── dbt_project.yml
+│   ├──   ├── models/
+│   ├──   ├── tests/
+│   ├──   ├── udf/
+│   ├──   ├── ...
+│   ├── chess_dlt
+│   ├──   ├── .dlt/
+│   ├──   ├── __init__.py
+│   ├──   ├── data_contracts.py
+│   ├── chess_etl
+│   ├──   ├── assets_dbt.py
+│   ├──   ├── assets_dlt.py
+│   ├──   ├── definitions.py
+│   ├──   ├── resources.py
+│   ├── dagster.yaml
+│   ├── Dockerfile_dagster
+│   ├── Dockerfile_user_code
+│   ├── profiles.yml
+│   ├── pyproject.toml
+│   ├── workspace.yaml
+├── data
+│   ├── chess.duckdb
+│   ├── ...
+├── streamlit_dashboard
+│   ├── app.py
+│   ├── Dockerfile
+│   └── requirements.txt
+├── .env.example
+├── docker-compose-dashboard.yml
+├── docker-compose.yml
+├── Makefile
+└── README.md
+</code></pre></div></div> <h2 id="running-chess-dashboard">Running Chess Dashboard</h2> <h3 id="run-locally">Run locally</h3> <p>To run locally, you’ll need:</p> <ol> <li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" rel="external nofollow noopener" target="_blank">git</a></li> <li><a href="https://github.com/" rel="external nofollow noopener" target="_blank">Github account</a></li> <li><a href="https://docs.docker.com/engine/install/" rel="external nofollow noopener" target="_blank">Docker</a></li> <li><a href="https://docs.docker.com/compose/install/" rel="external nofollow noopener" target="_blank">Docker Compose</a></li> </ol> <p>Clone the repo, create a <code class="language-plaintext highlighter-rouge">.env</code> file and run the following commands to start the data pipeline:</p> <ol> <li><code class="language-plaintext highlighter-rouge">git clone https://github.com/jkwd/chess_dashboard.git</code></li> <li><code class="language-plaintext highlighter-rouge">cd chess_dashboard</code></li> <li> <code class="language-plaintext highlighter-rouge">make init</code> to create an <code class="language-plaintext highlighter-rouge">.env</code> file from <code class="language-plaintext highlighter-rouge">.env.example</code> </li> <li>Edit the <code class="language-plaintext highlighter-rouge">CHESS_USERNAME</code> in the <code class="language-plaintext highlighter-rouge">.env</code> file to your username</li> <li> <code class="language-plaintext highlighter-rouge">make up</code> to build and start the docker container</li> <li>Go to <code class="language-plaintext highlighter-rouge">http://localhost:3000</code> to view the Dagster UI</li> <li><a href="#running-dagster-job">Materialize all assets</a></li> <li>Go to <code class="language-plaintext highlighter-rouge">http://localhost:8501</code> to view the Streamlit Dashboard</li> <li> <code class="language-plaintext highlighter-rouge">make down</code> to stop the containers</li> </ol> <h3 id="github-codespaces">Github Codespaces</h3> <ol> <li>Fork/Clone <code class="language-plaintext highlighter-rouge">https://github.com/jkwd/chess_dashboard.git</code> to your own Repository</li> <li>Open in Codespaces</li> <li> <code class="language-plaintext highlighter-rouge">make init</code> to create an <code class="language-plaintext highlighter-rouge">.env</code> file from <code class="language-plaintext highlighter-rouge">.env.example</code> </li> <li>Edit the <code class="language-plaintext highlighter-rouge">CHESS_USERNAME</code> in the <code class="language-plaintext highlighter-rouge">.env</code> file to your username</li> <li> <code class="language-plaintext highlighter-rouge">make up</code> to build and start the docker container</li> <li>Find the forwarded addresses in <code class="language-plaintext highlighter-rouge">PORTS</code> section of the Code Editor</li> </ol> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-04-03-chess-de-project/2-480.webp 480w,/assets/img/2025-04-03-chess-de-project/2-800.webp 800w,/assets/img/2025-04-03-chess-de-project/2-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-04-03-chess-de-project/2.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <ol> <li>Go to Forwarded address for port <code class="language-plaintext highlighter-rouge">3000</code> to view the Dagster UI</li> <li><a href="#running-dagster-job">Materialize all assets</a></li> <li>Go to Forwarded address for port <code class="language-plaintext highlighter-rouge">8501</code> to view the Streamlit Dashboard</li> <li> <code class="language-plaintext highlighter-rouge">make down</code> to stop the containers</li> <li>Stop/Delete Codespaces when you are done</li> </ol> <h3 id="running-dagster-job">Running Dagster Job</h3> <p>Click on Assets Tab on the top</p> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-04-03-chess-de-project/3-480.webp 480w,/assets/img/2025-04-03-chess-de-project/3-800.webp 800w,/assets/img/2025-04-03-chess-de-project/3-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-04-03-chess-de-project/3.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <p>Click on View global asset ineage at the top right of the page</p> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-04-03-chess-de-project/4-480.webp 480w,/assets/img/2025-04-03-chess-de-project/4-800.webp 800w,/assets/img/2025-04-03-chess-de-project/4-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-04-03-chess-de-project/4.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <p>Click on Materialize All</p> <h1 id="implementation">Implementation</h1> <h2 id="dagster-as-an-orchestrator">Dagster as an Orchestrator</h2> <p>Taking it directly from the docs, Dagster is an open source data orchestrator built for data engineers, with integrated lineage, observability, a declarative programming model, and best-in-class testability.</p> <p>There are many components to Dagster, but for this project we mainly focus on the following:</p> <ol> <li>Asset: The logical unit of data, e.g. table, dataset, ML model. This forms the nodes in the lineage graph. In this project, the assets are the dlt asset and the dbt asset.</li> <li>Resource: External dependencies such as APIs, databases, or anything outside of Dagster. In this project, the resources are DuckDB, dlt and dbt.</li> <li>Jobs: A subset of Assets. E.g. <code class="language-plaintext highlighter-rouge">some_job_1</code> can contain assets <code class="language-plaintext highlighter-rouge">A, B, C</code> and <code class="language-plaintext highlighter-rouge">some_job_2</code> can contain assets <code class="language-plaintext highlighter-rouge">W, X, Y, Z</code>.</li> <li>Schedule: A way to automate jobs/assets at a given interval (e.g. run everyday at 0000 UTC)</li> <li>Definitions: The top-level construct of the Dagster project which contains references to all the objects, e.g. Asset, Resources, Schedules, Jobs, etc.</li> </ol> <h2 id="duckdb-as-the-data-warehouse">DuckDB as the Data Warehouse</h2> <p>In simple terms, DuckDB is the online analytical processing (OLAP) version of SQLite. It is easy to install with a <code class="language-plaintext highlighter-rouge">pip install duckdb</code> and its completely embedded within the host system. It is free, fast, portable and has lots of features. It is simple and perfect for a single-node project like this.</p> <h2 id="ingestion-using-dltdagster">Ingestion using dlt+dagster</h2> <p><a href="https://dlthub.com/" rel="external nofollow noopener" target="_blank">dlt</a> allows us to load data from source system to a destination system using python.</p> <p>There are 4 main components to dlt:</p> <ol> <li> <a href="https://dlthub.com/docs/general-usage/source" rel="external nofollow noopener" target="_blank">Source</a>: The group of resources we plan to get the data from. E.g. API endpoint or Postgres DB</li> <li> <a href="https://dlthub.com/docs/general-usage/resource" rel="external nofollow noopener" target="_blank">Resource</a>: A function that yields the data</li> <li> <a href="https://dlthub.com/docs/general-usage/destination" rel="external nofollow noopener" target="_blank">Destination</a>: The location we want the data to land. E.g. S3, Snowflake, DuckDB</li> <li> <a href="https://dlthub.com/docs/reference/explainers/how-dlt-works" rel="external nofollow noopener" target="_blank">Pipeline</a>: The main building block of dlt which orchestrates the loading of data from your source into your destination in three discrete steps <ol> <li>Extracts data from the source to the hard drive</li> <li>Inspects and normalizes your data and computes a schema compatible with your destination. E.g. <code class="language-plaintext highlighter-rouge">{"items": {"id": 1}}</code> will become <code class="language-plaintext highlighter-rouge">items__id</code>. You can control the normalization phase and apply data schema contracts.</li> <li>Loads the data into the destination and run schema migrations if necessary</li> </ol> </li> </ol> <h3 id="configuring-the-source">Configuring the Source</h3> <p>A source can consist of a group of resources. So let’s start with the resource first:</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># chess_dagster/chess_dlt/__init__.py
+</span>
+<span class="nd">@dlt.resource</span><span class="p">(</span><span class="n">write_disposition</span><span class="o">=</span><span class="sh">"</span><span class="s">replace</span><span class="sh">"</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">PlayersGames</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">player_games</span><span class="p">(</span><span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="sh">"""</span><span class="s">
+    Yields player</span><span class="sh">'</span><span class="s">s `username` games.
+    Args:
+        username: str: Player username to retrieve games for.
+    Yields:
+        Generator[Any, Any, Any]: A generator that return a list of games for a player.
+    </span><span class="sh">"""</span>
+
+    <span class="k">def</span> <span class="nf">_get_player_archives</span><span class="p">(</span><span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
+        <span class="sh">"""</span><span class="s">
+        Returns url to game archives for a specified player username.
+        Args:
+            username: str: Player username to retrieve archives for.
+        Yields:
+            List: List of player archive data.
+        </span><span class="sh">"""</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">https://api.chess.com/pub/player/</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s">/games/archives</span><span class="sh">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">.</span><span class="nf">json</span><span class="p">().</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">archives</span><span class="sh">"</span><span class="p">,</span> <span class="p">[])</span>
+
+    <span class="c1"># get archives in parallel by decorating the http request with defer
+</span>    <span class="nd">@dlt.defer</span>
+    <span class="k">def</span> <span class="nf">_get_games</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+        <span class="sh">"""</span><span class="s">
+        Returns games of the specified player username from the given archive url.
+        Args:
+            url: str: URL to the archive to retrieve games from in the format https://api.chess.com/pub/player/{username}/games/{YYYY}/{MM}
+        Yields:
+            List: List of player</span><span class="sh">'</span><span class="s">s games data.
+        </span><span class="sh">"""</span>
+        <span class="n">logger</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Getting games from </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">games</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="n">url</span><span class="p">).</span><span class="nf">json</span><span class="p">().</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">games</span><span class="sh">"</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="k">return</span> <span class="n">games</span>  <span class="c1"># type: ignore
+</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="p">.</span><span class="n">HTTPError</span> <span class="k">as</span> <span class="n">http_err</span><span class="p">:</span>
+            <span class="c1"># sometimes archives are not available and the error seems to be permanent
+</span>            <span class="k">if</span> <span class="n">http_err</span><span class="p">.</span><span class="n">response</span><span class="p">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[]</span>
+            <span class="k">raise</span>
+        <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">logger</span><span class="p">.</span><span class="nf">error</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Unexpected error: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+            <span class="k">raise</span>
+
+
+    <span class="n">archives</span> <span class="o">=</span> <span class="nf">_get_player_archives</span><span class="p">(</span><span class="n">username</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">archives</span><span class="p">:</span>
+        <span class="c1"># the `url` format is https://api.chess.com/pub/player/{username}/games/{YYYY}/{MM}
+</span>
+        <span class="c1"># get the filtered archive
+</span>        <span class="k">yield</span> <span class="nf">_get_games</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</code></pre></div></div> <p>Here we have 1 resource <code class="language-plaintext highlighter-rouge">player_games</code> which gets the games of the player.</p> <p>Where we have configured 2 things:</p> <ol> <li> <code class="language-plaintext highlighter-rouge">write_disposition="replace"</code>: This means that every time we get new data, we will replace the entire table.</li> <li> <code class="language-plaintext highlighter-rouge">columns=PlayersGames</code>: This is where we apply a data schema contract during using <a href="https://docs.pydantic.dev/latest/" rel="external nofollow noopener" target="_blank">Pydantic</a> the normalize phase of the pipeline to ensure that the API returns the columns that we expect and in the right data type.</li> </ol> <p>Once we have the resource data, we can plug it into the source as such:</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># chess_dagster/chess_dlt/__init__.py
+</span>
+<span class="nd">@dlt.source</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">chess</span><span class="sh">"</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="nf">return </span><span class="p">(</span>
+        <span class="nf">player_games</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span>
+    <span class="p">)</span>
+</code></pre></div></div> <p>As mentioned earlier, a <code class="language-plaintext highlighter-rouge">dlt.source</code> consist of a group or resources. So if there is another resource then we just need to add it into the return statement tuple.</p> <p>The dagster asset created from the source and resource will have the name of <code class="language-plaintext highlighter-rouge">dlt_&lt;source_def_name&gt;_&lt;resource_def_name&gt;</code>. So in the case of the project it will be identified as <code class="language-plaintext highlighter-rouge">dlt_source_player_games</code>. If you remember when configuring <code class="language-plaintext highlighter-rouge">@dlt.source(name="chess")</code> we have the additional <code class="language-plaintext highlighter-rouge">name</code> parameter, this overwrites the source function name. So it will finally resolve to <code class="language-plaintext highlighter-rouge">dlt_chess_player_games</code> to be referenced by other downstream assets.</p> <p>Now that we have the source and resources done, let’s integrate dlt with dagster.</p> <h3 id="integrating-dlt-with-dagster">Integrating dlt with dagster</h3> <p>You can follow this <a href="https://docs.dagster.io/integrations/embedded-elt/dlt" rel="external nofollow noopener" target="_blank">guide</a> to integrate dagster+dlt.</p> <p>This requires:</p> <ol> <li>Creating the dagster resource for dlt (Not to be confused with dlt resource)</li> <li>Creating of the dlt asset</li> <li>Setting the dlt asset and dagster resource for dlt into the dagster definition</li> </ol> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># chess_dagster/chess_etl/resources.py
+</span>
+<span class="kn">from</span> <span class="n">dagster_embedded_elt.dlt</span> <span class="kn">import</span> <span class="n">DagsterDltResource</span>
+
+<span class="n">dlt_resource</span> <span class="o">=</span> <span class="nc">DagsterDltResource</span><span class="p">()</span>
+</code></pre></div></div> <p>Configuring the dagster resource for dlt is as simple as the 2 lines above. This resource will then be used in the Dagster definition. We will come back to the Dagster definition in the later section after configuring the dbt asset and resources as well.</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># chess_dagster/chess_etl/assets_dlt.py
+</span>
+<span class="nd">@dlt_assets</span><span class="p">(</span>
+    <span class="n">dlt_source</span><span class="o">=</span><span class="nf">source</span><span class="p">(</span>
+        <span class="n">username</span><span class="o">=</span><span class="n">os</span><span class="p">.</span><span class="nf">getenv</span><span class="p">(</span><span class="sh">"</span><span class="s">CHESS_USERNAME</span><span class="sh">"</span><span class="p">)</span>
+    <span class="p">),</span>
+    <span class="n">dlt_pipeline</span><span class="o">=</span><span class="nf">pipeline</span><span class="p">(</span>
+        <span class="n">pipeline_name</span><span class="o">=</span><span class="sh">"</span><span class="s">chess_pipeline</span><span class="sh">"</span><span class="p">,</span>
+        <span class="n">destination</span><span class="o">=</span><span class="n">destinations</span><span class="p">.</span><span class="nf">duckdb</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="nf">getenv</span><span class="p">(</span><span class="sh">'</span><span class="s">CHESS_DB</span><span class="sh">'</span><span class="p">)),</span> <span class="c1"># The path to the .duckdb file
+</span>        <span class="n">dataset_name</span><span class="o">=</span><span class="n">SCHEMA_RAW</span><span class="p">,</span> <span class="c1"># This is the table schema in duckdb.
+</span>    <span class="p">),</span>
+    <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">chess</span><span class="sh">"</span><span class="p">,</span> <span class="c1"># This is the table catalog in duckdb.
+</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">chess_dlt_assets</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">AssetExecutionContext</span><span class="p">,</span> <span class="n">dlt</span><span class="p">:</span> <span class="n">DagsterDltResource</span><span class="p">):</span>
+    <span class="k">yield</span> <span class="k">from</span> <span class="n">dlt</span><span class="p">.</span><span class="nf">run</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
+</code></pre></div></div> <p>The above code creates the dlt asset. dlt allow us to just focus on getting the data into the required format. If you noticed, the creation and insert/overwrite/deletion of schema and table are all handled by dlt.</p> <p>In DuckDB, the table details will be as follows when the data has been loaded given that <code class="language-plaintext highlighter-rouge">SCHEMA_RAW='chess_data_raw'</code>:</p> <table> <thead> <tr> <th>table_catalog</th> <th>table_schema</th> <th>table_name</th> </tr> </thead> <tbody> <tr> <td>chess</td> <td>chess_data_raw</td> <td>player_games</td> </tr> </tbody> </table> <h2 id="transformation-using-dbtdagster">Transformation using dbt+dagster</h2> <p><a href="https://docs.getdbt.com/docs/introduction" rel="external nofollow noopener" target="_blank">dbt</a> is a transformation workflow that allows you to modularize and centralize your analytics code, while also providing your data team with guardrails typically found in software engineering workflows. It allows engineers to transform data in the warehouse more effectively and its the T in the ELT framework.</p> <p>There are many components to dbt, but for this project we mainly focus on the following:</p> <ol> <li>Models: SQL/python queries that define data transformations</li> <li>Tests: Ensure data quality by validating on the models</li> <li>Documentation: Documentation of the table and columns as well as providing the data lineage</li> </ol> <h3 id="configuring-the-dbt-project">Configuring the dbt project</h3> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c1"># dbt_project.yml</span>
+
+<span class="na">name</span><span class="pi">:</span> <span class="s1">'</span><span class="s">chess_dbt'</span>
+<span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">1.0.0'</span>
+
+<span class="na">profile</span><span class="pi">:</span> <span class="s1">'</span><span class="s">chess_dbt'</span>
+
+<span class="na">model-paths</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">models"</span><span class="pi">]</span>
+<span class="na">seed-paths</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">seeds"</span><span class="pi">]</span>
+<span class="na">test-paths</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">tests"</span><span class="pi">]</span>
+<span class="na">analysis-paths</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">analysis"</span><span class="pi">]</span>
+<span class="na">macro-paths</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">macros"</span><span class="pi">]</span>
+
+<span class="na">target-path</span><span class="pi">:</span> <span class="s2">"</span><span class="s">target"</span>
+<span class="na">clean-targets</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">target"</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">dbt_modules"</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">logs"</span>
+
+<span class="na">require-dbt-version</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">&gt;=1.0.0"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">&lt;2.0.0"</span><span class="pi">]</span>
+
+<span class="na">vars</span><span class="pi">:</span>
+  <span class="na">username</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{env_var('CHESS_USERNAME')}}"</span>
+
+
+<span class="na">models</span><span class="pi">:</span>
+  <span class="na">chess_dbt</span><span class="pi">:</span>
+    <span class="na">materialized</span><span class="pi">:</span> <span class="s">table</span>
+    <span class="na">staging</span><span class="pi">:</span>
+      <span class="na">materialized</span><span class="pi">:</span> <span class="s">view</span>
+
+</code></pre></div></div> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c1"># profiles.yml</span>
+
+<span class="na">chess_dbt</span><span class="pi">:</span>
+  <span class="na">target</span><span class="pi">:</span> <span class="s">dev</span>
+  <span class="na">outputs</span><span class="pi">:</span>
+    <span class="na">dev</span><span class="pi">:</span>
+        <span class="s">...</span>
+    <span class="na">ci</span><span class="pi">:</span>
+        <span class="s">...</span>
+    <span class="na">prod</span><span class="pi">:</span>
+      <span class="na">type</span><span class="pi">:</span> <span class="s">duckdb</span>
+      <span class="na">path</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">env_var('CHESS_DB')</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">threads</span><span class="pi">:</span> <span class="m">1</span>
+      <span class="na">module_paths</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">env_var('DAGSTER_APP')</span><span class="nv"> </span><span class="s">}}/chess_dbt/udf"</span>
+      <span class="na">plugins</span><span class="pi">:</span>
+        <span class="c1"># Custom module in the lib directory that defines SQL UDFs written in Python at the start of</span>
+        <span class="c1"># the dbt run</span>
+        <span class="pi">-</span> <span class="na">module</span><span class="pi">:</span> <span class="s">my_custom_functions</span>
+
+</code></pre></div></div> <p>Above are the configurations for the <code class="language-plaintext highlighter-rouge">dbt_project.yml</code> and <code class="language-plaintext highlighter-rouge">profiles.yml</code>.</p> <h3 id="using-python-udfs">Using python UDFs</h3> <p>In the <code class="language-plaintext highlighter-rouge">profiles.yml</code> you may notice something less familiar under the <code class="language-plaintext highlighter-rouge">module_paths</code> and <code class="language-plaintext highlighter-rouge">plugins</code>. DuckDB allows us to register Python UDFs which can then be used as a function in our SQL models. So we create the UDF in <code class="language-plaintext highlighter-rouge">my_custom_functions.py</code> file located at the specified module_paths.</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># chess_dagster/chess_dbt/udf/my_custom_functions.py
+</span>
+<span class="kn">from</span> <span class="n">duckdb</span> <span class="kn">import</span> <span class="n">DuckDBPyConnection</span>
+
+<span class="kn">from</span> <span class="n">dbt.adapters.duckdb.plugins</span> <span class="kn">import</span> <span class="n">BasePlugin</span>
+<span class="kn">from</span> <span class="n">dbt.adapters.duckdb.utils</span> <span class="kn">import</span> <span class="n">TargetConfig</span>
+
+<span class="kn">import</span> <span class="n">chess.pgn</span>
+<span class="kn">from</span> <span class="n">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
+<span class="kn">import</span> <span class="n">chess</span>
+
+<span class="k">def</span> <span class="nf">pgn_to_fens_udf</span><span class="p">(</span><span class="n">pgn</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sh">"""</span><span class="s">Takes in a PGN and go move by move to get the FEN of the board at each move.
+    Returns a list of fen strings.
+
+    Args:
+        pgn (str): pgn of the game
+
+    Returns:
+        arr (list[str]): fen strings of the board at each move
+    </span><span class="sh">"""</span>
+    <span class="n">pgn_header</span> <span class="o">=</span> <span class="n">pgn</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="sh">'</span><span class="se">\n\n</span><span class="sh">'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">pgn_moves</span> <span class="o">=</span> <span class="n">pgn</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="sh">'</span><span class="se">\n\n</span><span class="sh">'</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="sh">'</span><span class="s">Chess960</span><span class="sh">'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pgn_header</span><span class="p">:</span>
+        <span class="n">pgn</span> <span class="o">=</span> <span class="n">pgn_moves</span>
+
+    <span class="n">arr</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">game</span> <span class="o">=</span> <span class="n">chess</span><span class="p">.</span><span class="n">pgn</span><span class="p">.</span><span class="nf">read_game</span><span class="p">(</span><span class="nc">StringIO</span><span class="p">(</span><span class="n">pgn</span><span class="p">)).</span><span class="nf">game</span><span class="p">()</span>
+    <span class="n">board</span> <span class="o">=</span> <span class="n">game</span><span class="p">.</span><span class="nf">board</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">move</span> <span class="ow">in</span> <span class="n">game</span><span class="p">.</span><span class="nf">mainline_moves</span><span class="p">():</span>
+        <span class="n">board</span><span class="p">.</span><span class="nf">push</span><span class="p">(</span><span class="n">move</span><span class="p">)</span>
+        <span class="n">fen</span> <span class="o">=</span> <span class="n">board</span><span class="p">.</span><span class="nf">fen</span><span class="p">()</span>
+        <span class="n">arr</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">fen</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">arr</span>
+
+<span class="c1"># The python module that you create must have a class named "Plugin"
+# which extends the `dbt.adapters.duckdb.plugins.BasePlugin` class.
+</span><span class="k">class</span> <span class="nc">Plugin</span><span class="p">(</span><span class="n">BasePlugin</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">configure_connection</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">DuckDBPyConnection</span><span class="p">):</span>
+        <span class="n">conn</span><span class="p">.</span><span class="nf">create_function</span><span class="p">(</span><span class="sh">"</span><span class="s">pgn_to_fens_udf</span><span class="sh">"</span><span class="p">,</span> <span class="n">pgn_to_fens_udf</span><span class="p">)</span>
+</code></pre></div></div> <p>Above is an example of how we can configure the the UDF and in the SQL model, we can do something like below to use it:</p> <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">select</span>
+<span class="n">pgn_to_fens_udf</span><span class="p">(</span><span class="s1">'some_pgn'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fens</span>
+<span class="k">from</span> <span class="n">some_table</span>
+</code></pre></div></div> <p>Technically, dbt has released python models which would have allowed us to just create the model in python instead of using UDF with SQL. However by doing this, we may restrict ourselves unintentionally. As dbt is a more SQL-first framework, some features such as dbt unit-tests are only <a href="https://docs.getdbt.com/docs/build/unit-tests#before-you-begin" rel="external nofollow noopener" target="_blank">supported with SQL models</a>.</p> <h3 id="integrating-dbt-with-dagster">Integrating dbt with dagster</h3> <p>You can follow this <a href="https://docs.dagster.io/integrations/libraries/dbt/dbt-core" rel="external nofollow noopener" target="_blank">guide</a> to integrate dagster+dbt.</p> <p>This requires:</p> <ol> <li>Creating the dagster resource for dbt</li> <li>Creating of the dbt asset in Dagster</li> <li>Setting the dbt asset and dagster resource for dbt into the dagster definition</li> </ol> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># chess_dagster/chess_etl/resources.py
+</span>
+<span class="kn">from</span> <span class="n">dagster_dbt</span> <span class="kn">import</span> <span class="n">DbtCliResource</span>
+<span class="kn">from</span> <span class="n">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="n">os</span>
+
+<span class="n">HOME_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="nf">getenv</span><span class="p">(</span><span class="sh">"</span><span class="s">HOME</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="n">dbt_project_dir</span> <span class="o">=</span> <span class="nc">Path</span><span class="p">(</span><span class="n">__file__</span><span class="p">).</span><span class="nf">joinpath</span><span class="p">(</span><span class="sh">"</span><span class="s">..</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">..</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">chess_dbt</span><span class="sh">"</span><span class="p">).</span><span class="nf">resolve</span><span class="p">()</span>
+<span class="n">dbt_resource</span> <span class="o">=</span> <span class="nc">DbtCliResource</span><span class="p">(</span><span class="n">project_dir</span><span class="o">=</span><span class="n">os</span><span class="p">.</span><span class="nf">fspath</span><span class="p">(</span><span class="n">dbt_project_dir</span><span class="p">),</span>
+                              <span class="n">profiles_dir</span><span class="o">=</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">HOME_DIR</span><span class="p">,</span> <span class="sh">"</span><span class="s">.dbt</span><span class="sh">"</span><span class="p">),</span>
+                              <span class="n">global_config_flags</span><span class="o">=</span><span class="p">[</span><span class="sh">"</span><span class="s">--log-format-file</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">text</span><span class="sh">"</span><span class="p">],</span>
+                              <span class="n">target</span><span class="o">=</span><span class="sh">"</span><span class="s">prod</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># If DAGSTER_DBT_PARSE_PROJECT_ON_LOAD is set, a manifest will be created at run time.
+# Otherwise, we expect a manifest to be present in the project's target directory.
+</span><span class="k">if</span> <span class="n">os</span><span class="p">.</span><span class="nf">getenv</span><span class="p">(</span><span class="sh">"</span><span class="s">DAGSTER_DBT_PARSE_PROJECT_ON_LOAD</span><span class="sh">"</span><span class="p">):</span>
+    <span class="n">dbt_manifest_path</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">dbt_resource</span><span class="p">.</span><span class="nf">cli</span><span class="p">(</span>
+            <span class="p">[</span><span class="sh">"</span><span class="s">--quiet</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">parse</span><span class="sh">"</span><span class="p">],</span>
+            <span class="n">target_path</span><span class="o">=</span><span class="nc">Path</span><span class="p">(</span><span class="sh">"</span><span class="s">target</span><span class="sh">"</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="p">.</span><span class="nf">wait</span><span class="p">()</span>
+        <span class="p">.</span><span class="n">target_path</span><span class="p">.</span><span class="nf">joinpath</span><span class="p">(</span><span class="sh">"</span><span class="s">manifest.json</span><span class="sh">"</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">dbt_manifest_path</span> <span class="o">=</span> <span class="n">dbt_project_dir</span><span class="p">.</span><span class="nf">joinpath</span><span class="p">(</span><span class="sh">"</span><span class="s">target</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">manifest.json</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div> <p>Setting up the dbt resources is not as straightforward as dlt’s. Like any other dbt projects, we may need to specify the path to the <code class="language-plaintext highlighter-rouge">dbt_project.yml</code> and <code class="language-plaintext highlighter-rouge">profiles.yml</code>.</p> <p>In addition to the 2 files, Dagster also expects the dbt <code class="language-plaintext highlighter-rouge">manifest.json</code> to be present. The manifest contains all the dbt model, tests, macros, etc and it’ll be used by Dagster to create the respective Dagster Assets and also display them on the lineage graph in the UI. We have <code class="language-plaintext highlighter-rouge">DAGSTER_DBT_PARSE_PROJECT_ON_LOAD</code> in our <code class="language-plaintext highlighter-rouge">.env</code> file to give us the flexibility to provide our own manifest file or to parse one at “runtime”.</p> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># chess_dagster/chess_etl/assets_dbt.py
+</span>
+<span class="kn">from</span> <span class="n">dagster</span> <span class="kn">import</span> <span class="n">AssetExecutionContext</span>
+<span class="kn">from</span> <span class="n">dagster_dbt</span> <span class="kn">import</span> <span class="n">DbtCliResource</span><span class="p">,</span> <span class="n">dbt_assets</span>
+
+<span class="kn">from</span> <span class="n">chess_etl.resources</span> <span class="kn">import</span> <span class="n">dbt_manifest_path</span>
+
+
+<span class="nd">@dbt_assets</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">dbt_manifest_path</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">chess_dbt_assets</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">AssetExecutionContext</span><span class="p">,</span> <span class="n">dbt</span><span class="p">:</span> <span class="n">DbtCliResource</span><span class="p">):</span>
+    <span class="k">yield</span> <span class="k">from</span> <span class="n">dbt</span><span class="p">.</span><span class="nf">cli</span><span class="p">([</span><span class="sh">"</span><span class="s">build</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">--target</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">prod</span><span class="sh">"</span><span class="p">],</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">).</span><span class="nf">stream</span><span class="p">()</span>
+</code></pre></div></div> <p>Using the <code class="language-plaintext highlighter-rouge">manifest.json</code> and the <code class="language-plaintext highlighter-rouge">DbtCliResource</code>, we can now define our Dagster dbt asset. We can specify the dbt command that we want in <code class="language-plaintext highlighter-rouge">dbt.cli()</code>.</p> <h2 id="dagster-definitions-to-integrate-dltdbt-into-dagster">Dagster definitions to integrate dlt+dbt into Dagster</h2> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># chess_dagster/chess_etl/definitions.py
+</span>
+<span class="kn">from</span> <span class="n">dagster</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Definitions</span><span class="p">,</span>
+    <span class="n">ScheduleDefinition</span><span class="p">,</span>
+    <span class="n">define_asset_job</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="n">chess_etl.assets_dlt</span> <span class="kn">import</span> <span class="n">chess_dlt_assets</span>
+<span class="kn">from</span> <span class="n">chess_etl.assets_dbt</span> <span class="kn">import</span> <span class="n">chess_dbt_assets</span>
+<span class="kn">from</span> <span class="n">chess_etl.resources</span> <span class="kn">import</span> <span class="n">dlt_resource</span><span class="p">,</span> <span class="n">dbt_resource</span>
+
+
+<span class="n">all_assets_job</span> <span class="o">=</span> <span class="nf">define_asset_job</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">all_assets_job</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="n">daily_refresh_schedule</span> <span class="o">=</span> <span class="nc">ScheduleDefinition</span><span class="p">(</span>
+    <span class="n">job</span><span class="o">=</span><span class="n">all_assets_job</span><span class="p">,</span> <span class="n">cron_schedule</span><span class="o">=</span><span class="sh">"</span><span class="s">0 0 * * *</span><span class="sh">"</span>
+<span class="p">)</span>
+
+<span class="c1"># Must be last
+</span><span class="n">defs</span> <span class="o">=</span> <span class="nc">Definitions</span><span class="p">(</span>
+    <span class="n">assets</span><span class="o">=</span><span class="p">[</span><span class="n">chess_dlt_assets</span><span class="p">,</span> <span class="n">chess_dbt_assets</span><span class="p">],</span>
+    <span class="n">resources</span><span class="o">=</span><span class="p">{</span>
+        <span class="sh">"</span><span class="s">dlt</span><span class="sh">"</span><span class="p">:</span> <span class="n">dlt_resource</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">dbt</span><span class="sh">"</span><span class="p">:</span> <span class="n">dbt_resource</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">schedules</span><span class="o">=</span><span class="p">[</span><span class="n">daily_refresh_schedule</span><span class="p">],</span>
+    <span class="n">jobs</span><span class="o">=</span><span class="p">[</span><span class="n">all_assets_job</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div></div> <p>In the definitions, we will define the 2 resources and assets. We can also create a Job and Schedule for that Job. Everything will be part of the <code class="language-plaintext highlighter-rouge">Definitions()</code> that will be used to power the Dagster app.</p> <h2 id="deploying-dagster-on-docker">Deploying Dagster on Docker</h2> <p>You can follow this <a href="https://docs.dagster.io/guides/deploy/deployment-options/docker" rel="external nofollow noopener" target="_blank">guide</a> and this <a href="https://github.com/dagster-io/dagster/tree/master/examples/deploy_docker" rel="external nofollow noopener" target="_blank">github</a> to deploy the project on Dagster</p> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-04-03-chess-de-project/5-480.webp 480w,/assets/img/2025-04-03-chess-de-project/5-800.webp 800w,/assets/img/2025-04-03-chess-de-project/5-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-04-03-chess-de-project/5.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <p>Dagster allows us to seperate the user code from the system code. This allows for seperation of concerns and any crashes from the user code will not crash Dagster. Each user code repository and the Dagster system can run on their own python environment as well which reduces the dependencies of each other.</p> <p>You may view the following code in the links provided to set up Dagster on Docker:</p> <ul> <li><a href="https://github.com/jkwd/chess_dashboard/blob/main/chess_dagster/Dockerfile_dagster" rel="external nofollow noopener" target="_blank">Dockerfile_dagster</a></li> <li><a href="https://github.com/jkwd/chess_dashboard/blob/main/chess_dagster/Dockerfile_user_code" rel="external nofollow noopener" target="_blank">Dockerfile_user_code</a></li> <li><a href="https://github.com/jkwd/chess_dashboard/blob/main/docker-compose.yml" rel="external nofollow noopener" target="_blank">docker-compose.yml</a></li> <li><a href="https://github.com/jkwd/chess_dashboard/blob/main/chess_dagster/workspace.yaml" rel="external nofollow noopener" target="_blank">workspace.yaml</a></li> <li><a href="https://github.com/jkwd/chess_dashboard/blob/main/chess_dagster/dagster.yaml" rel="external nofollow noopener" target="_blank">dagster.yaml</a></li> </ul> <h2 id="streamlit-dashboard">Streamlit Dashboard</h2> <p>Once the data has been populated, we can view the results in the streamlit dashboard under <code class="language-plaintext highlighter-rouge">http://localhost:8501/</code>.</p> <h2 id="ci-checks">CI Checks</h2> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="na">name</span><span class="pi">:</span> <span class="s">Docker CI Workflow</span>
+
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">workflow_dispatch</span><span class="pi">:</span>
+  <span class="na">push</span><span class="pi">:</span>
+    <span class="na">branches</span><span class="pi">:</span> <span class="pi">[</span> <span class="s2">"</span><span class="s">main"</span> <span class="pi">]</span>
+  <span class="na">pull_request</span><span class="pi">:</span>
+    <span class="na">branches</span><span class="pi">:</span> <span class="pi">[</span> <span class="s2">"</span><span class="s">main"</span> <span class="pi">]</span>
+
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">run-ci-tests</span><span class="pi">:</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+
+    <span class="na">steps</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Checkout code</span>
+      <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v4</span>
+
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Create .env file</span>
+      <span class="na">run</span><span class="pi">:</span> <span class="s">cp .env.example .env</span>
+
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Check docker-compose</span>
+      <span class="na">run</span><span class="pi">:</span> <span class="s">docker compose version</span>
+
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Check docker-compose format</span>
+      <span class="na">run</span><span class="pi">:</span> <span class="s">docker compose -f docker-compose.yml config</span>
+
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install Make</span>
+      <span class="na">run</span><span class="pi">:</span> <span class="s">sudo apt-get install make</span>
+
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Build the docker compose images</span>
+      <span class="na">run</span><span class="pi">:</span> <span class="s">make build</span>
+
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run python lint</span>
+      <span class="na">run</span><span class="pi">:</span> <span class="s">make lint-python</span>
+
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run SQL lint</span>
+      <span class="na">run</span><span class="pi">:</span> <span class="s">make lint-sql</span>
+
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run pytest</span>
+      <span class="na">run</span><span class="pi">:</span> <span class="s">make pytest</span>
+
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run dbt unit test</span>
+      <span class="na">run</span><span class="pi">:</span> <span class="s">make dbt-unit-test</span>
+
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run e2e</span>
+      <span class="na">run</span><span class="pi">:</span> <span class="s">make run</span>
+
+  <span class="na">generate-dbt-docs</span><span class="pi">:</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">needs</span><span class="pi">:</span> <span class="s">run-ci-tests</span>
+
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Checkout code</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v4</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">print working directory</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">pwd</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">list directory</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">ls -l</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dbt</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">pip3 install dbt-duckdb==1.9.0</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Verify dbt</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">dbt --version</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">dbt parse</span>
+        <span class="na">working-directory</span><span class="pi">:</span> <span class="s">./chess_dagster/chess_dbt</span>
+        <span class="na">env</span><span class="pi">:</span>
+          <span class="na">CHESS_USERNAME</span><span class="pi">:</span> <span class="s">magnuscarlsen</span>
+        <span class="na">run </span><span class="pi">:</span> <span class="pi">|</span>
+          <span class="s">dbt parse --profiles-dir .. --project-dir . --target ci</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">generate dbt docs</span>
+        <span class="na">working-directory</span><span class="pi">:</span> <span class="s">./chess_dagster/chess_dbt</span>
+        <span class="na">env</span><span class="pi">:</span>
+          <span class="na">CHESS_USERNAME</span><span class="pi">:</span> <span class="s">magnuscarlsen</span>
+        <span class="na">run </span><span class="pi">:</span> <span class="pi">|</span>
+          <span class="s">dbt docs generate --profiles-dir .. --project-dir . --empty-catalog --no-compile --target ci</span>
+          <span class="s">cd target</span>
+          <span class="s">mkdir ${{ github.workspace }}/docs</span>
+          <span class="s">cp *.json *.html ${{ github.workspace }}/docs</span>
+          <span class="s">ls -ltra ${{ github.workspace }}/docs</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Upload</span><span class="nv"> </span><span class="s">pages</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">artifact"</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/upload-pages-artifact@v3</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">path</span><span class="pi">:</span> <span class="s">${{ github.workspace }}/docs</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Zip</span><span class="nv"> </span><span class="s">artifact"</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">zip -jrq docs.zip ${{ github.workspace }}/docs</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Upload</span><span class="nv"> </span><span class="s">artifact</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">deployment</span><span class="nv"> </span><span class="s">job"</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/upload-artifact@v4</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">docs</span>
+          <span class="na">path</span><span class="pi">:</span> <span class="s">docs.zip</span>
+
+  <span class="c1"># Deploy to Github pages</span>
+  <span class="na">deploy-to-github-pages</span><span class="pi">:</span>
+    <span class="c1"># Add a dependency to the build job</span>
+    <span class="na">needs</span><span class="pi">:</span> <span class="s">generate-dbt-docs</span>
+
+    <span class="c1"># Grant GITHUB_TOKEN the permissions required to make a Pages deployment</span>
+    <span class="na">permissions</span><span class="pi">:</span>
+      <span class="na">pages</span><span class="pi">:</span> <span class="s">write</span> <span class="c1"># to deploy to Pages</span>
+      <span class="na">id-token</span><span class="pi">:</span> <span class="s">write</span> <span class="c1"># to verify the deployment originates from an appropriate source</span>
+
+    <span class="c1"># Deploy to the github-pages environment</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">name</span><span class="pi">:</span> <span class="s">github-pages</span>
+      <span class="na">url</span><span class="pi">:</span> <span class="s">${{ steps.deployment.outputs.page_url }}</span>
+
+    <span class="c1"># Specify runner + deployment step</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Deploy to GitHub Pages</span>
+        <span class="na">id</span><span class="pi">:</span> <span class="s">deployment</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/deploy-pages@v4</span> <span class="c1"># or the latest "vX.X.X" version tag for this action</span>
+
+</code></pre></div></div> <p>For CI, we use Github Actions to perform the checks and publish dbt docs for reference:</p> <ol> <li>Lint python using ruff</li> <li>Lint SQL using sqlruff</li> <li>Run pytests for python based unit tests</li> <li>Run dbt unit tests</li> <li>Run Dagster Job end-to-end to ensure everything works (Job is relatively fast)</li> <li>Generate dbt docs</li> <li>Publish dbt docs to github pages (You can view the generated dbt docs <a href="https://johnkohwd.com/chess_dashboard" rel="external nofollow noopener" target="_blank">here</a>)</li> </ol> <p>Step 1-5 are being run on the docker container to ensure consistency in the results.</p> </div> </article> <br> <hr> <br> <ul class="list-disc pl-8"></ul> <h1 class="text-3xl font-semibold mb-4 mt-12">Enjoy Reading This Article?</h1> <p class="mb-2">Here are some more articles you might like to read next:</p> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2025/full-vs-incremental-load/">Full vs incremental load</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2025/oltp-vs-olap/">Benchmarking OLTP vs OLAP</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2025/github-actions/">Github Actions Tutorial</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2025/terraform-notes/">Terraform Tutorial</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2025/docker-notes/">Docker Tutorial</a> </li> </div> </div> <footer class="sticky-bottom mt-5" role="contentinfo"> <div class="container"> © Copyright 2025 John Koh. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. </div> </footer> <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> <script src="/assets/js/bootstrap.bundle.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?a0db7e5d5c70cc3252b3138b0c91dcaf" type="text/javascript"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/js/zoom.js?85ddb88934d28b74e78031fd54cf8308"></script> <script src="/assets/js/no_defer.js?2781658a0a2b13ed609542042a859126"></script> <script defer src="/assets/js/common.js?e0514a05c5c95ac1a93a8dfd5249b92e"></script> <script defer src="/assets/js/copy_code.js?12775fdf7f95e901d7119054556e495f" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?d9f17b6adc2311cbabd747f4538bb15f"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/js/mathjax-setup.js?a5bb4e6a542c546dd929b24b8b236dfd"></script> <script defer src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6" crossorigin="anonymous"></script> <script async src="https://www.googletagmanager.com/gtag/js?id=G-57NGLGRVZL"></script> <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'G-57NGLGRVZL');
+  </script> <script defer src="/assets/js/google-analytics-setup.js?12374742c4b1801ba82226e617af7e2d"></script> <script defer src="/assets/js/progress-bar.js?2f30e0e6801ea8f5036fa66e1ab0a71a" type="text/javascript"></script> <script src="/assets/js/vanilla-back-to-top.min.js?f40d453793ff4f64e238e420181a1d17"></script> <script>
+    addBackToTop();
+  </script> </body> </html>

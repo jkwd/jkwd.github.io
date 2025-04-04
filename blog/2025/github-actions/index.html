@@ -1,0 +1,667 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> Github Actions Tutorial | John Koh </title> <meta name="author" content="John Koh"> <meta name="description" content="Notes on Github Actions"> <link rel="stylesheet" href="/assets/css/bootstrap.min.css?a4b3f509e79c54a512b890d73235ef04"> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/css/mdb.min.css" integrity="sha256-jpjYvU3G3N6nrrBwXJoVEYI/0zw8htfFnhT9ljN3JJw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="/assets/css/academicons.min.css?f0b7046b84e425c55f3463ac249818f5"> <link defer rel="stylesheet" href="/assets/css/scholar-icons.css?62b2ac103a88034e6882a5be5f3e2772"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?6b8f493672acdc2dec9dd24ea9f5b855" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="/assets/img/jk.ico?17701e4c193bcbbeb8562ecc8617eb58"> <link rel="stylesheet" href="/assets/css/main.css?d41d8cd98f00b204e9800998ecf8427e"> <link rel="canonical" href="https://jkwd.github.io/blog/2025/github-actions/"> <script src="/assets/js/theme.js?9a0c749ec5240d9cda97bc72359a72c0"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav sticky-bottom-footer"> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">John</span> Koh </a> <button class="navbar-toggler collapsed ml-auto" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse text-right" id="navbarNav"> <ul class="navbar-nav ml-auto flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/"> </a> </li> <li class="nav-item active"> <a class="nav-link" href="/index.html">blog </a> </li> <li class="nav-item "> <a class="nav-link" href="/about/">About </a> </li> <li class="toggle-container"> <button id="light-toggle" title="Change theme"> <i class="ti ti-sun-moon" id="light-toggle-system"></i> <i class="ti ti-moon-filled" id="light-toggle-dark"></i> <i class="ti ti-sun-filled" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="post"> <header class="post-header"> <h1 class="post-title">Github Actions Tutorial</h1> <p class="post-meta"> Created on January 10, 2025 </p> <p class="post-tags"> <a href="/blog/2025"> <i class="fa-solid fa-calendar fa-sm"></i> 2025 </a>   ·   <a href="/blog/tag/data-engineering"> <i class="fa-solid fa-hashtag fa-sm"></i> data_engineering</a>   <a href="/blog/tag/github-actions"> <i class="fa-solid fa-hashtag fa-sm"></i> github_actions</a>   <a href="/blog/tag/cicd"> <i class="fa-solid fa-hashtag fa-sm"></i> cicd</a>   ·   <a href="/blog/category/learning"> <i class="fa-solid fa-tag fa-sm"></i> learning</a> </p> </header> <article class="post-content"> <div id="table-of-contents"> <ul id="toc" class="section-nav"> <li class="toc-entry toc-h1"><a href="#example">Example</a></li> <li class="toc-entry toc-h1"> <a href="#workflow">Workflow</a> <ul> <li class="toc-entry toc-h2"><a href="#event-listeners">Event Listeners</a></li> </ul> </li> <li class="toc-entry toc-h1"> <a href="#jobs">Jobs</a> <ul> <li class="toc-entry toc-h2"><a href="#steps">Steps</a></li> </ul> </li> <li class="toc-entry toc-h1"><a href="#skip-workflow">Skip Workflow</a></li> <li class="toc-entry toc-h1"> <a href="#job-artifacts--outputs">Job Artifacts &amp; Outputs</a> <ul> <li class="toc-entry toc-h2"> <a href="#artifacts">Artifacts</a> <ul> <li class="toc-entry toc-h3"><a href="#upload-artifacts">Upload artifacts</a></li> <li class="toc-entry toc-h3"><a href="#downloading-artifacts">Downloading artifacts</a></li> </ul> </li> <li class="toc-entry toc-h2"><a href="#job-outputs">Job Outputs</a></li> </ul> </li> <li class="toc-entry toc-h1"><a href="#dependency-caching">Dependency Caching</a></li> <li class="toc-entry toc-h1"><a href="#environment-variables">Environment Variables</a></li> <li class="toc-entry toc-h1"> <a href="#secrets">Secrets</a> <ul> <li class="toc-entry toc-h2"><a href="#repository-secrets">Repository Secrets</a></li> <li class="toc-entry toc-h2"><a href="#environment-secrets">Environment Secrets</a></li> </ul> </li> <li class="toc-entry toc-h1"> <a href="#execution-flow">Execution flow</a> <ul> <li class="toc-entry toc-h2"> <a href="#step-level-if-condition">Step level if condition</a> <ul> <li class="toc-entry toc-h3"><a href="#failure-example">Failure example</a></li> <li class="toc-entry toc-h3"><a href="#cache-example">Cache example</a></li> </ul> </li> <li class="toc-entry toc-h2"><a href="#job-level-if-condition">Job level if condition</a></li> </ul> </li> <li class="toc-entry toc-h1"><a href="#matrix-strategy">Matrix strategy</a></li> <li class="toc-entry toc-h1"><a href="#reusable-workflow">Reusable workflow</a></li> <li class="toc-entry toc-h1"> <a href="#run-jobs-on-docker-containers">Run Jobs on docker containers</a> <ul> <li class="toc-entry toc-h2"> <a href="#service-containers">Service Containers</a> <ul> <li class="toc-entry toc-h3"><a href="#using-service-with-container">Using Service with Container</a></li> <li class="toc-entry toc-h3"><a href="#using-service-without-container">Using Service without container</a></li> </ul> </li> </ul> </li> <li class="toc-entry toc-h1"> <a href="#custom-actions">Custom Actions</a> <ul> <li class="toc-entry toc-h2"> <a href="#composite-actions">Composite Actions</a> <ul> <li class="toc-entry toc-h3"><a href="#example-custom-composite-action">Example (Custom Composite Action)</a></li> <li class="toc-entry toc-h3"><a href="#example-using-custom-action-at-workflow-yml">Example (Using custom Action at workflow yml)</a></li> </ul> </li> <li class="toc-entry toc-h2"> <a href="#javascript-actions">JavaScript Actions</a> <ul> <li class="toc-entry toc-h3"><a href="#actionyml">action.yml</a></li> <li class="toc-entry toc-h3"><a href="#mainjs">main.js</a></li> <li class="toc-entry toc-h3"><a href="#workflow-1">workflow</a></li> </ul> </li> <li class="toc-entry toc-h2"><a href="#docker-action">Docker Action</a></li> </ul> </li> <li class="toc-entry toc-h1"> <a href="#security-of-gh-actions">Security of gh actions</a> <ul> <li class="toc-entry toc-h2"><a href="#script-injections">Script Injections</a></li> <li class="toc-entry toc-h2"><a href="#actions">Actions</a></li> <li class="toc-entry toc-h2"> <a href="#permission">Permission</a> <ul> <li class="toc-entry toc-h3"><a href="#secretsgithub_token">secrets.GITHUB_TOKEN</a></li> </ul> </li> <li class="toc-entry toc-h2"><a href="#managing-more-permissions">Managing more permissions</a></li> <li class="toc-entry toc-h2"><a href="#managing-secret-keys-for-3rd-party-platforms">Managing Secret Keys for 3rd-party platforms</a></li> </ul> </li> </ul> </div> <hr> <div id="markdown-content"> <h1 id="example">Example</h1> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">Deploy Workflow</span>
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">workflow_dispatch</span><span class="pi">:</span>
+  <span class="na">pull_request</span><span class="pi">:</span>
+    <span class="na">types</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">opened</span>
+      <span class="pi">-</span> <span class="s">edited</span>
+    <span class="na">branches</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">main</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">dev-*'</span> <span class="c1"># * allows anything other then '/' E.g. dev-new dev-another</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">feat/**'</span> <span class="c1">#** allows for more '/'. E.g. feat/new #feat/new/button</span>
+  <span class="na">push</span><span class="pi">:</span>
+    <span class="na">branches</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">main</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">dev-*'</span> <span class="c1"># * allows anything other then '/' E.g. dev-new dev-another</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">feat/**'</span> <span class="c1">#** allows for more '/'. E.g. feat/new #feat/new/button</span>
+    <span class="na">paths-ignore</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">.github/workflows/*'</span>
+<span class="na">env</span><span class="pi">:</span>
+  <span class="na">WORKFLOW_ENV_1</span><span class="pi">:</span> <span class="s">gha-demo</span> <span class="c1"># Workflow level</span>
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">lint</span><span class="pi">:</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get code</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v3</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Cache dependencies</span>
+        <span class="na">id</span><span class="pi">:</span> <span class="s">cache</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/cache@v3</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">path</span><span class="pi">:</span> <span class="s">node_modules</span>
+          <span class="na">key</span><span class="pi">:</span> <span class="s">deps-node-modules-$</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
+        <span class="na">if</span><span class="pi">:</span> <span class="s">steps.cache.outputs.cache-hit != 'true'</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm ci</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Lint code</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm run lint</span>
+  <span class="na">test</span><span class="pi">:</span>
+    <span class="c1"># Job level environment</span>
+    <span class="na">env</span><span class="pi">:</span>
+      <span class="na">JOB_ENV_1</span><span class="pi">:</span>
+      <span class="na">JOB_ENV_1</span><span class="pi">:</span>
+      <span class="na">JOB_ENV_1</span><span class="pi">:</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get code</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v3</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Cache dependencies</span>
+        <span class="na">id</span><span class="pi">:</span> <span class="s">cache</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/cache@v3</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">path</span><span class="pi">:</span> <span class="s">node_modules</span>
+          <span class="na">key</span><span class="pi">:</span> <span class="s">deps-node-modules-$</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
+        <span class="na">if</span><span class="pi">:</span> <span class="s">steps.cache.outputs.cache-hit != 'true'</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm ci</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Test code</span>
+        <span class="na">id</span><span class="pi">:</span> <span class="s">run-tests</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm run test</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Upload test report</span>
+        <span class="na">if</span><span class="pi">:</span> <span class="s">failure() &amp;&amp; steps.run-tests.outcome == 'failure'</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/upload-artifact@v3</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">test-report</span>
+          <span class="na">path</span><span class="pi">:</span> <span class="s">test.json</span>
+  <span class="na">build</span><span class="pi">:</span>
+    <span class="na">needs</span><span class="pi">:</span> <span class="s">test</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">outputs</span><span class="pi">:</span>
+      <span class="na">script-file</span><span class="pi">:</span> <span class="s">$</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get code</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v3</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Cache dependencies</span>
+        <span class="na">id</span><span class="pi">:</span> <span class="s">cache</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/cache@v3</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">path</span><span class="pi">:</span> <span class="s">node_modules</span>
+          <span class="na">key</span><span class="pi">:</span> <span class="s">deps-node-modules-$</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
+        <span class="na">if</span><span class="pi">:</span> <span class="s">steps.cache.outputs.cache-hit != 'true'</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm ci</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Build website</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm run build</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Publish JS filename</span>
+        <span class="na">id</span><span class="pi">:</span> <span class="s">publish</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">find dist/assets/*.js -type f -execdir echo 'script={}' &gt;&gt; $GITHUB_OUTPUT ';'</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Upload artifacts</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/upload-artifact@v3</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">dist-files</span>
+          <span class="na">path</span><span class="pi">:</span> <span class="s">dist</span>
+  <span class="na">deploy</span><span class="pi">:</span>
+    <span class="na">needs</span><span class="pi">:</span> <span class="s">build</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get build artifacts</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/download-artifact@v3</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">dist-files</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Output contents</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">ls</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Output filename</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">echo "$"</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Deploy</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">echo "Deploying..."</span>
+  <span class="na">report</span><span class="pi">:</span>
+    <span class="na">needs</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">lint</span><span class="pi">,</span> <span class="nv">deploy</span><span class="pi">]</span> <span class="c1"># To force the report job to run last</span>
+    <span class="na">if</span><span class="pi">:</span> <span class="s">failure()</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Output info</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="pi">|</span>
+          <span class="s">echo "something went wrong..."</span>
+          <span class="s">echo "$"</span>
+</code></pre></div></div> <blockquote> <p>💡 YML file needs to be stored in <code class="language-plaintext highlighter-rouge">.github/workflows</code> directory</p> </blockquote> <h1 id="workflow">Workflow</h1> <ul> <li>Requires the <code class="language-plaintext highlighter-rouge">name</code> of the workflow</li> <li>Requires the <code class="language-plaintext highlighter-rouge">on</code> to listen to events to trigger the workflow</li> </ul> <h2 id="event-listeners">Event Listeners</h2> <ul> <li> <code class="language-plaintext highlighter-rouge">workflow_dispatch</code> <ul> <li>manual trigger</li> </ul> </li> <li> <code class="language-plaintext highlighter-rouge">pull_request</code> <ul> <li>requires types - has some default types if not specified</li> <li>Allows for branches/path targetted</li> </ul> </li> <li> <code class="language-plaintext highlighter-rouge">push</code> <ul> <li>Allows for branches/path targetted</li> </ul> </li> </ul> <blockquote> <p>💡 branches and paths have the compliment version (e.g. branch-ignore/path-ignore). Event Listeners operate on an OR condition within the branch/path and AND condition betwenn branch/path</p> </blockquote> <h1 id="jobs">Jobs</h1> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">build</span><span class="pi">:</span>
+    <span class="na">needs</span><span class="pi">:</span> <span class="s">test</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get code</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v3</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm ci</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Build website</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm run build</span>
+</code></pre></div></div> <ul> <li>Requres the <code class="language-plaintext highlighter-rouge">runs-on</code> to specify the type of machine the steps will run on</li> <li> <code class="language-plaintext highlighter-rouge">needs</code> is used to specify the upstream job dependency (e.g. <code class="language-plaintext highlighter-rouge">build</code> job depends on <code class="language-plaintext highlighter-rouge">test</code>)</li> </ul> <h2 id="steps">Steps</h2> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">steps</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get code</span>
+    <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v3</span>
+
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install NodeJS</span>
+    <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/setup-node@v3</span>
+    <span class="na">with</span><span class="pi">:</span>
+      <span class="na">node-version</span><span class="pi">:</span> <span class="m">18</span>
+
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
+    <span class="na">run</span><span class="pi">:</span> <span class="s">npm ci</span>
+</code></pre></div></div> <ul> <li> <code class="language-plaintext highlighter-rouge">run</code> - anything eg bash commands etc</li> <li> <code class="language-plaintext highlighter-rouge">uses</code>- uses existing github actions packages to help <ul> <li> <code class="language-plaintext highlighter-rouge">with</code>- additional parameters to be used with the actions package</li> </ul> </li> </ul> <h1 id="skip-workflow">Skip Workflow</h1> <ul> <li> <code class="language-plaintext highlighter-rouge">git commit -m "Add comment [skip ci]"</code> <ul> <li>To not make workflow run for this particular push</li> </ul> </li> </ul> <h1 id="job-artifacts--outputs">Job Artifacts &amp; Outputs</h1> <h2 id="artifacts">Artifacts</h2> <h3 id="upload-artifacts">Upload artifacts</h3> <ul> <li>Output from the workflow, e.g. log files or app binaries from build</li> </ul> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">steps</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get code</span>
+    <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v3</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
+    <span class="na">run</span><span class="pi">:</span> <span class="s">npm ci</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Build website</span>
+    <span class="na">run</span><span class="pi">:</span> <span class="s">npm run build</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Upload artifacts</span>
+    <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/upload-artifact@v3</span>
+    <span class="na">with</span><span class="pi">:</span>
+      <span class="na">name</span><span class="pi">:</span> <span class="s">dist-files</span>
+      <span class="na">path</span><span class="pi">:</span> <span class="pi">|</span>
+        <span class="s">dist</span>
+        <span class="s">package.json</span>
+</code></pre></div></div> <ul> <li>Artifacts shown in github actions workflow <ul> <li>Contains both dist and package.json as specified above</li> </ul> </li> </ul> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/1-480.webp 480w,/assets/img/2025-01-13-github-actions/1-800.webp 800w,/assets/img/2025-01-13-github-actions/1-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/1.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <div class="col-sm-6 mx-auto"> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/2-480.webp 480w,/assets/img/2025-01-13-github-actions/2-800.webp 800w,/assets/img/2025-01-13-github-actions/2-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/2.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> </div> <h3 id="downloading-artifacts">Downloading artifacts</h3> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">steps</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get build artifacts</span>
+    <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/download-artifact@v3</span>
+    <span class="na">with</span><span class="pi">:</span>
+      <span class="na">name</span><span class="pi">:</span> <span class="s">dist-files</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Output contents</span>
+    <span class="na">run</span><span class="pi">:</span> <span class="s">ls</span>
+</code></pre></div></div> <ul> <li>Files are already unpacked</li> </ul> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/3-480.webp 480w,/assets/img/2025-01-13-github-actions/3-800.webp 800w,/assets/img/2025-01-13-github-actions/3-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/3.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h2 id="job-outputs">Job Outputs</h2> <ul> <li>Different from artifacts <ul> <li>Typically used for reusing value in downstream jobs (e.g. name of file)</li> </ul> </li> </ul> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">build</span><span class="pi">:</span>
+    <span class="na">needs</span><span class="pi">:</span> <span class="s">test</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">outputs</span><span class="pi">:</span>
+      <span class="na">script-file</span><span class="pi">:</span> <span class="s">$</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get code</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v3</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm ci</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Build website</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm run build</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Publish JS filename</span>
+        <span class="na">id</span><span class="pi">:</span> <span class="s">publish</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">find dist/assets/*.js -type f -execdir echo 'script={}' &gt;&gt; $GITHUB_OUTPUT ';'</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Upload artifacts</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/upload-artifact@v3</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">dist-files</span>
+          <span class="na">path</span><span class="pi">:</span> <span class="s">dist</span>
+  <span class="na">deploy</span><span class="pi">:</span>
+    <span class="na">needs</span><span class="pi">:</span> <span class="s">build</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get build artifacts</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/download-artifact@v3</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">dist-files</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Output contents</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">ls</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Output filename</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">echo "$"</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Deploy</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">echo "Deploying..."</span>
+</code></pre></div></div> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/4-480.webp 480w,/assets/img/2025-01-13-github-actions/4-800.webp 800w,/assets/img/2025-01-13-github-actions/4-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/4.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <div class="col-sm-9 mx-auto"> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/5-480.webp 480w,/assets/img/2025-01-13-github-actions/5-800.webp 800w,/assets/img/2025-01-13-github-actions/5-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/5.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> </div> <h1 id="dependency-caching">Dependency Caching</h1> <ul> <li>Cache repeated steps to reduce time of workflow</li> </ul> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/6-480.webp 480w,/assets/img/2025-01-13-github-actions/6-800.webp 800w,/assets/img/2025-01-13-github-actions/6-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/6.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <p>https://github.com/actions/cache/blob/main/examples.md#node—npm</p> <ul> <li>Looks for the file hash of the dependency installation details (In js is package-lock.json) <ul> <li>To be used in all the repeated palces with the same <code class="language-plaintext highlighter-rouge">key</code> </li> </ul> </li> </ul> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">test</span><span class="pi">:</span>
+  <span class="c1"># Do something above</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Cache dependencies</span>
+    <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/cache@v3</span>
+    <span class="na">with</span><span class="pi">:</span>
+      <span class="na">path</span><span class="pi">:</span> <span class="s">~/.npm</span>
+      <span class="na">key</span><span class="pi">:</span> <span class="s">deps-node-modules-$</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
+    <span class="na">run</span><span class="pi">:</span> <span class="s">npm ci</span>
+  <span class="pi">-</span> <span class="s">...</span>
+<span class="na">build</span><span class="pi">:</span>
+  <span class="c1"># Do something above</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Cache dependencies</span>
+    <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/cache@v3</span>
+    <span class="na">with</span><span class="pi">:</span>
+      <span class="na">path</span><span class="pi">:</span> <span class="s">~/.npm</span>
+      <span class="na">key</span><span class="pi">:</span> <span class="s">deps-node-modules-$</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
+    <span class="na">run</span><span class="pi">:</span> <span class="s">npm ci</span>
+  <span class="pi">-</span> <span class="s">...</span>
+</code></pre></div></div> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/7-480.webp 480w,/assets/img/2025-01-13-github-actions/7-800.webp 800w,/assets/img/2025-01-13-github-actions/7-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/7.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/8-480.webp 480w,/assets/img/2025-01-13-github-actions/8-800.webp 800w,/assets/img/2025-01-13-github-actions/8-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/8.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h1 id="environment-variables">Environment Variables</h1> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">Deployment</span>
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">push</span><span class="pi">:</span>
+    <span class="na">branches</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">main</span>
+      <span class="pi">-</span> <span class="s">dev</span>
+<span class="na">env</span><span class="pi">:</span>
+  <span class="na">MONGODB_DB_NAME</span><span class="pi">:</span> <span class="s">gha-demo</span> <span class="c1"># Workflow level ENV_VAR</span>
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">test</span><span class="pi">:</span>
+    <span class="c1"># Job level ENV_VAR</span>
+    <span class="na">env</span><span class="pi">:</span>
+      <span class="na">MONGODB_CLUSTER_ADDRESS</span><span class="pi">:</span> <span class="s">cluster_1.mongodb.net</span>
+      <span class="na">MONGODB_USERNAME</span><span class="pi">:</span> <span class="s">admin</span>
+      <span class="na">MONGODB_PASSWORD</span><span class="pi">:</span> <span class="s">admin</span>
+      <span class="na">PORT</span><span class="pi">:</span> <span class="m">8080</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="c1"># Do something above</span>
+      <span class="c1"># Reference the job level env var PORT</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run server</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm start &amp; npx wait-on http://127.0.0.1:$PORT</span>
+  <span class="na">deploy</span><span class="pi">:</span>
+    <span class="c1"># Previous Job ENV_VARs not accessible</span>
+</code></pre></div></div> <h1 id="secrets">Secrets</h1> <h2 id="repository-secrets">Repository Secrets</h2> <ul> <li>To prevent pushing username/passwords into the <code class="language-plaintext highlighter-rouge">.github/workflows/</code> code <ul> <li>Create via Repository secrets</li> </ul> </li> </ul> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/9-480.webp 480w,/assets/img/2025-01-13-github-actions/9-800.webp 800w,/assets/img/2025-01-13-github-actions/9-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/9.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">Deployment</span>
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">push</span><span class="pi">:</span>
+    <span class="na">branches</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">main</span>
+      <span class="pi">-</span> <span class="s">dev</span>
+<span class="na">env</span><span class="pi">:</span>
+  <span class="na">MONGODB_DB_NAME</span><span class="pi">:</span> <span class="s">gha-demo</span> <span class="c1"># Workflow level ENV_VAR</span>
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">test</span><span class="pi">:</span>
+    <span class="c1"># Job level ENV_VAR</span>
+    <span class="na">env</span><span class="pi">:</span>
+      <span class="na">MONGODB_CLUSTER_ADDRESS</span><span class="pi">:</span> <span class="s">cluster_1.mongodb.net</span>
+      <span class="na">MONGODB_USERNAME</span><span class="pi">:</span> <span class="s">$</span>
+      <span class="na">MONGODB_PASSWORD</span><span class="pi">:</span> <span class="s">$</span>
+      <span class="na">PORT</span><span class="pi">:</span> <span class="m">8080</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="c1"># Do something above</span>
+      <span class="c1"># Reference the job level env var PORT</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run server</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm start &amp; npx wait-on http://127.0.0.1:$PORT</span>
+  <span class="na">deploy</span><span class="pi">:</span>
+    <span class="c1"># Previous Job ENV_VARs not accessible</span>
+</code></pre></div></div> <blockquote> <p>💡 When echo the environment variable with secrets, it’ll hide the info and print <code class="language-plaintext highlighter-rouge">***</code></p> </blockquote> <h2 id="environment-secrets">Environment Secrets</h2> <ul> <li>Allow you to have different secret values for different environment <ul> <li>Testing</li> <li>Production</li> </ul> </li> <li>Allows secrets to be used on certain branch/tag logic</li> </ul> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/10-480.webp 480w,/assets/img/2025-01-13-github-actions/10-800.webp 800w,/assets/img/2025-01-13-github-actions/10-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/10.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/11-480.webp 480w,/assets/img/2025-01-13-github-actions/11-800.webp 800w,/assets/img/2025-01-13-github-actions/11-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/11.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">Deployment</span>
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">push</span><span class="pi">:</span>
+    <span class="na">branches</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">main</span>
+      <span class="pi">-</span> <span class="s">dev</span>
+<span class="na">env</span><span class="pi">:</span>
+  <span class="na">MONGODB_DB_NAME</span><span class="pi">:</span> <span class="s">gha-demo</span> <span class="c1"># Workflow level ENV_VAR</span>
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">test</span><span class="pi">:</span>
+    <span class="na">environment</span><span class="pi">:</span> <span class="s">testing</span> <span class="c1"># To use the environment secrets named 'testing'</span>
+    <span class="c1"># Job level ENV_VAR</span>
+    <span class="na">env</span><span class="pi">:</span>
+      <span class="na">MONGODB_CLUSTER_ADDRESS</span><span class="pi">:</span> <span class="s">cluster_1.mongodb.net</span>
+      <span class="na">MONGODB_USERNAME</span><span class="pi">:</span> <span class="s">$</span>
+      <span class="na">MONGODB_PASSWORD</span><span class="pi">:</span> <span class="s">$</span>
+      <span class="na">PORT</span><span class="pi">:</span> <span class="m">8080</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="c1"># Do something above</span>
+      <span class="c1"># Reference the job level env var PORT</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run server</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm start &amp; npx wait-on http://127.0.0.1:$PORT</span>
+  <span class="na">deploy</span><span class="pi">:</span>
+    <span class="c1"># Previous Job ENV_VARs not accessible</span>
+</code></pre></div></div> <h1 id="execution-flow">Execution flow</h1> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/12-480.webp 480w,/assets/img/2025-01-13-github-actions/12-800.webp 800w,/assets/img/2025-01-13-github-actions/12-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/12.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h2 id="step-level-if-condition">Step level if condition</h2> <h3 id="failure-example">Failure example</h3> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Test code</span>
+  <span class="na">id</span><span class="pi">:</span> <span class="s">run-tests</span>
+  <span class="na">run</span><span class="pi">:</span> <span class="s">npm run test</span>
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Upload test report</span>
+  <span class="na">if</span><span class="pi">:</span> <span class="s">failure() &amp;&amp; steps.run-tests.outcome == 'failure'</span>
+  <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/upload-artifact@v3</span>
+  <span class="na">with</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">test-report</span>
+    <span class="na">path</span><span class="pi">:</span> <span class="s">test.json</span>
+</code></pre></div></div> <blockquote> <p>💡 <code class="language-plaintext highlighter-rouge">failure()</code> is required in order to run the Upload test report step</p> </blockquote> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/13-480.webp 480w,/assets/img/2025-01-13-github-actions/13-800.webp 800w,/assets/img/2025-01-13-github-actions/13-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/13.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h3 id="cache-example">Cache example</h3> <p>If node_modules exist then do not need to install dependencies</p> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Cache dependencies</span>
+  <span class="na">id</span><span class="pi">:</span> <span class="s">cache</span>
+  <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/cache@v3</span>
+  <span class="na">with</span><span class="pi">:</span>
+    <span class="na">path</span><span class="pi">:</span> <span class="s">node_modules</span>
+    <span class="na">key</span><span class="pi">:</span> <span class="s">deps-node-modules-$</span>
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
+  <span class="na">if</span><span class="pi">:</span> <span class="s">steps.cache.outputs.cache-hit != 'true'</span>
+  <span class="na">run</span><span class="pi">:</span> <span class="s">npm ci</span>
+</code></pre></div></div> <h2 id="job-level-if-condition">Job level if condition</h2> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">report</span><span class="pi">:</span>
+  <span class="na">needs</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">lint</span><span class="pi">,</span> <span class="nv">deploy</span><span class="pi">]</span> <span class="c1"># To force the report job to run last</span>
+  <span class="na">if</span><span class="pi">:</span> <span class="s">failure()</span>
+  <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+  <span class="na">steps</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Output info</span>
+      <span class="na">run</span><span class="pi">:</span> <span class="pi">|</span>
+        <span class="s">echo "something went wrong..."</span>
+        <span class="s">echo "$"</span>
+</code></pre></div></div> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/14-480.webp 480w,/assets/img/2025-01-13-github-actions/14-800.webp 800w,/assets/img/2025-01-13-github-actions/14-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/14.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h1 id="matrix-strategy">Matrix strategy</h1> <ul> <li>Allows to run same job with multiple different configurations</li> </ul> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">Matrix Demo</span>
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">push</span><span class="pi">:</span>
+    <span class="na">branches</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">main</span>
+
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">lint</span><span class="pi">:</span>
+    <span class="na">continue-on-erro</span><span class="pi">:</span> <span class="kc">true</span> <span class="c1"># To let the rest of the jobs run if 1 fails</span>
+    <span class="na">strategy</span><span class="pi">:</span>
+      <span class="na">matrix</span><span class="pi">:</span>
+        <span class="c1"># Create 3 x 2 combinations</span>
+        <span class="na">node-version</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">12</span><span class="pi">,</span> <span class="nv">14</span><span class="pi">,</span> <span class="nv">16</span><span class="pi">]</span>
+        <span class="na">operating-system</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">ubuntu-latest</span><span class="pi">,</span> <span class="nv">windows-latest</span><span class="pi">]</span>
+        <span class="c1"># Exclude combination in the matrix</span>
+        <span class="na">exclude</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="na">node-version</span><span class="pi">:</span> <span class="m">12</span>
+            <span class="na">operating-system</span><span class="pi">:</span> <span class="s">windows-latest</span>
+        <span class="c1"># Add single combination not part of matrix</span>
+        <span class="na">include</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="na">node-version</span><span class="pi">:</span> <span class="m">18</span>
+            <span class="na">operating-system</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">$</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get code</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v3</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install NodeJS</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/setup-node@v3</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">node-version</span><span class="pi">:</span> <span class="s">$</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Cache dependencies</span>
+        <span class="na">id</span><span class="pi">:</span> <span class="s">cache</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/cache@v3</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">path</span><span class="pi">:</span> <span class="s">node_modules</span>
+          <span class="na">key</span><span class="pi">:</span> <span class="s">deps-node-modules-$</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
+        <span class="na">if</span><span class="pi">:</span> <span class="s">steps.cache.outputs.cache-hit != 'true'</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm ci</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Lint code</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm run lint</span>
+</code></pre></div></div> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/15-480.webp 480w,/assets/img/2025-01-13-github-actions/15-800.webp 800w,/assets/img/2025-01-13-github-actions/15-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/15.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h1 id="reusable-workflow">Reusable workflow</h1> <ul> <li>Create a workflow that can be referenced and used from another workflow <ul> <li>Allows inputs to make it dynamic</li> <li>Allows passing info back to the wofkflow calling it</li> </ul> </li> </ul> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">Reusable Deploy</span>
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">workflow_call</span><span class="pi">:</span> <span class="c1"># Allows this workflow to be called from other workflow</span>
+    <span class="na">inputs</span><span class="pi">:</span>
+      <span class="na">artifact-name</span><span class="pi">:</span>
+        <span class="na">description</span><span class="pi">:</span> <span class="s">The name of the deployable artifact file</span>
+        <span class="na">required</span><span class="pi">:</span> <span class="kc">false</span>
+        <span class="na">default</span><span class="pi">:</span> <span class="s">dist</span>
+        <span class="na">type</span><span class="pi">:</span> <span class="s">string</span>
+    <span class="na">outputs</span><span class="pi">:</span>
+      <span class="na">result</span><span class="pi">:</span>
+        <span class="na">description</span><span class="pi">:</span> <span class="s">Result of the deployment operation</span>
+        <span class="na">value</span><span class="pi">:</span> <span class="s">$</span>
+    <span class="na">secrets</span><span class="pi">:</span>
+      <span class="na">some-secret</span><span class="pi">:</span>
+        <span class="na">required</span><span class="pi">:</span> <span class="kc">false</span>
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">deploy</span><span class="pi">:</span>
+    <span class="na">outputs</span><span class="pi">:</span>
+      <span class="na">outcome</span><span class="pi">:</span> <span class="s">$</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get Code Binaries</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/download-artifact@v3</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">$</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">List files</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">ls</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Output info</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">echo "Deploying..."</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Set result output</span>
+        <span class="na">id</span><span class="pi">:</span> <span class="s">set-result</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">echo "step-result=success" &gt;&gt; $GITHUB_OUTPUT</span>
+</code></pre></div></div> <blockquote> <p>💡 on needs to be workflow_call</p> </blockquote> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">Use Reusable</span>
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">push</span><span class="pi">:</span>
+    <span class="na">branches</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">main</span>
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">lint</span><span class="pi">:</span> <span class="s">...</span>
+  <span class="na">test</span><span class="pi">:</span> <span class="s">...</span>
+  <span class="na">build</span><span class="pi">:</span> <span class="s">...</span>
+  <span class="na">deploy</span><span class="pi">:</span>
+    <span class="na">needs</span><span class="pi">:</span> <span class="s">build</span>
+    <span class="na">uses</span><span class="pi">:</span> <span class="s">./.github/workflows/reusable.yml</span> <span class="c1"># yml of the workflow to use</span>
+    <span class="na">with</span><span class="pi">:</span>
+      <span class="na">artifact-name</span><span class="pi">:</span> <span class="s">dist-files</span> <span class="c1"># To pass the variable over to reusable.yml</span>
+    <span class="na">secrets</span><span class="pi">:</span>
+      <span class="na">some-secret</span><span class="pi">:</span> <span class="s">$</span>
+  <span class="na">print-deploy-result</span><span class="pi">:</span>
+    <span class="na">needs</span><span class="pi">:</span> <span class="s">deploy</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Print deploy output</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">echo "$"</span>
+</code></pre></div></div> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/16-480.webp 480w,/assets/img/2025-01-13-github-actions/16-800.webp 800w,/assets/img/2025-01-13-github-actions/16-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/16.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h1 id="run-jobs-on-docker-containers">Run Jobs on docker containers</h1> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">test</span><span class="pi">:</span>
+    <span class="na">environment</span><span class="pi">:</span> <span class="s">testing</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">container</span><span class="pi">:</span> <span class="c1"># DEFINE HERE. HOSTED ON ubuntu-latest</span>
+      <span class="na">image</span><span class="pi">:</span> <span class="s">node:16</span>
+      <span class="na">env</span><span class="pi">:</span> <span class="c1"># THIS IS ENV_VAR FOR IMAGE AND NOT STEPS</span>
+        <span class="na">VAR_1</span><span class="pi">:</span> <span class="s">val_1</span>
+    <span class="na">env</span><span class="pi">:</span>
+      <span class="na">MONGODB_CONNECTION_PROTOCOL</span><span class="pi">:</span> <span class="s">mongodb+srv</span>
+      <span class="na">MONGODB_CLUSTER_ADDRESS</span><span class="pi">:</span> <span class="s">cluster0.ntrwp.mongodb.net</span>
+      <span class="na">MONGODB_USERNAME</span><span class="pi">:</span> <span class="s">$</span>
+      <span class="na">MONGODB_PASSWORD</span><span class="pi">:</span> <span class="s">$</span>
+      <span class="na">PORT</span><span class="pi">:</span> <span class="m">8080</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">...</span>
+      <span class="pi">-</span> <span class="s">...</span>
+</code></pre></div></div> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/17-480.webp 480w,/assets/img/2025-01-13-github-actions/17-800.webp 800w,/assets/img/2025-01-13-github-actions/17-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/17.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h2 id="service-containers">Service Containers</h2> <ul> <li>To host a isolated testing db inside the github action job instead of connecting to the prod db</li> </ul> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/18-480.webp 480w,/assets/img/2025-01-13-github-actions/18-800.webp 800w,/assets/img/2025-01-13-github-actions/18-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/18.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h3 id="using-service-with-container">Using Service with Container</h3> <ul> <li>Create a mongodb service inside node:16 container with network name as mongodb-service</li> </ul> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">test</span><span class="pi">:</span>
+    <span class="na">environment</span><span class="pi">:</span> <span class="s">testing</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">container</span><span class="pi">:</span> <span class="c1"># DEFINE HERE. HOSTED ON ubuntu-latest</span>
+      <span class="na">image</span><span class="pi">:</span> <span class="s">node:16</span>
+      <span class="na">env</span><span class="pi">:</span> <span class="c1"># THIS IS ENV_VAR FOR IMAGE AND NOT STEPS</span>
+        <span class="na">VAR_1</span><span class="pi">:</span> <span class="s">VAL_1</span>
+    <span class="na">env</span><span class="pi">:</span>
+      <span class="na">MONGODB_CONNECTION_PROTOCOL</span><span class="pi">:</span> <span class="s">mongodb</span>
+      <span class="na">MONGODB_CLUSTER_ADDRESS</span><span class="pi">:</span> <span class="s">mongodb-service</span>
+      <span class="na">MONGODB_USERNAME</span><span class="pi">:</span> <span class="s">root</span> <span class="c1"># Testing DB details</span>
+      <span class="na">MONGODB_PASSWORD</span><span class="pi">:</span> <span class="s">example</span>
+      <span class="na">PORT</span><span class="pi">:</span> <span class="m">8080</span>
+    <span class="na">services</span><span class="pi">:</span> <span class="c1"># ALWAYS RUN INSIDE OF IMAGES</span>
+      <span class="na">mongodb-service</span><span class="pi">:</span> <span class="c1"># Testing DB - will be deleted after job ends</span>
+        <span class="na">image</span><span class="pi">:</span> <span class="s">mongo</span>
+        <span class="na">env</span><span class="pi">:</span>
+          <span class="na">MONGO_INITDB_ROOT_USERNAME</span><span class="pi">:</span> <span class="s">root</span>
+          <span class="na">MONGO_INITDB_ROOT_PASSWORD</span><span class="pi">:</span> <span class="s">example</span>
+      <span class="na">another-service</span><span class="pi">:</span> <span class="s">...</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">...</span>
+</code></pre></div></div> <blockquote> <p>💡 If job runs in container, then github actions will handle the networking between the container and service for you. Hence in above example, <code class="language-plaintext highlighter-rouge">MONGODB_CLUSTER_ADDRESS</code> can be set to the name of the service <code class="language-plaintext highlighter-rouge">mongodb-service</code></p> </blockquote> <h3 id="using-service-without-container">Using Service without container</h3> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">test</span><span class="pi">:</span>
+    <span class="na">environment</span><span class="pi">:</span> <span class="s">testing</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">env</span><span class="pi">:</span>
+      <span class="na">MONGODB_CONNECTION_PROTOCOL</span><span class="pi">:</span> <span class="s">mongodb</span>
+      <span class="na">MONGODB_CLUSTER_ADDRESS</span><span class="pi">:</span> <span class="s">127.0.0.1:27017</span>
+      <span class="na">MONGODB_USERNAME</span><span class="pi">:</span> <span class="s">root</span> <span class="c1"># Testing DB details</span>
+      <span class="na">MONGODB_PASSWORD</span><span class="pi">:</span> <span class="s">example</span>
+      <span class="na">PORT</span><span class="pi">:</span> <span class="m">8080</span>
+    <span class="na">services</span><span class="pi">:</span> <span class="c1"># ALWAYS RUN INSIDE OF IMAGES</span>
+      <span class="na">mongodb-service</span><span class="pi">:</span> <span class="c1"># Testing DB - will be deleted after job ends</span>
+        <span class="na">image</span><span class="pi">:</span> <span class="s">mongo</span>
+        <span class="na">ports</span><span class="pi">:</span> <span class="c1"># Need to open the mongodb port</span>
+          <span class="pi">-</span> <span class="s">27017:27017</span>
+        <span class="na">env</span><span class="pi">:</span>
+          <span class="na">MONGO_INITDB_ROOT_USERNAME</span><span class="pi">:</span> <span class="s">root</span>
+          <span class="na">MONGO_INITDB_ROOT_PASSWORD</span><span class="pi">:</span> <span class="s">example</span>
+      <span class="na">another-service</span><span class="pi">:</span> <span class="s">...</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">...</span>
+</code></pre></div></div> <blockquote> <p>💡 If no containers are used, then the service port will need to be opened and changing the <code class="language-plaintext highlighter-rouge">MONGODB_CLUSTER_ADDRESS</code></p> </blockquote> <h1 id="custom-actions">Custom Actions</h1> <ul> <li>3 kinds of custom actions</li> </ul> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/19-480.webp 480w,/assets/img/2025-01-13-github-actions/19-800.webp 800w,/assets/img/2025-01-13-github-actions/19-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/19.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h2 id="composite-actions">Composite Actions</h2> <p>Stored in</p> <ol> <li>New repository of actions</li> <li>Locally within <code class="language-plaintext highlighter-rouge">.github/&lt;folder_name&gt;/&lt;action_name&gt;/action.yml</code> </li> </ol> <h3 id="example-custom-composite-action">Example (Custom Composite Action)</h3> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Get</span><span class="nv"> </span><span class="s">&amp;</span><span class="nv"> </span><span class="s">Cache</span><span class="nv"> </span><span class="s">Dependencies"</span>
+<span class="na">description</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Get</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">dependencies</span><span class="nv"> </span><span class="s">(via</span><span class="nv"> </span><span class="s">npm)</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">cache</span><span class="nv"> </span><span class="s">them."</span>
+<span class="na">inputs</span><span class="pi">:</span> <span class="c1"># Custom input for the action</span>
+  <span class="na">to-cache</span><span class="pi">:</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Whether</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">cache</span><span class="nv"> </span><span class="s">dependencies</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">not"</span>
+    <span class="na">required</span><span class="pi">:</span> <span class="kc">false</span>
+    <span class="na">default</span><span class="pi">:</span> <span class="s2">"</span><span class="s">true"</span>
+<span class="na">outputs</span><span class="pi">:</span> <span class="c1"># Custom output for the action</span>
+  <span class="na">used-cache</span><span class="pi">:</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Whether</span><span class="nv"> </span><span class="s">cache</span><span class="nv"> </span><span class="s">was</span><span class="nv"> </span><span class="s">used</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">not"</span>
+    <span class="na">value</span><span class="pi">:</span> <span class="s">$</span>
+
+<span class="c1"># runs and using are compulsory</span>
+<span class="na">runs</span><span class="pi">:</span>
+  <span class="na">using</span><span class="pi">:</span> <span class="s2">"</span><span class="s">composite"</span>
+  <span class="na">steps</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Cache dependencies</span>
+      <span class="na">if</span><span class="pi">:</span> <span class="s">inputs.to-cache == 'true'</span>
+      <span class="na">id</span><span class="pi">:</span> <span class="s">cache</span>
+      <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/cache@v3</span>
+      <span class="na">with</span><span class="pi">:</span>
+        <span class="na">path</span><span class="pi">:</span> <span class="s">node_modules</span>
+        <span class="na">key</span><span class="pi">:</span> <span class="s">deps-node-modules-$</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install dependencies</span>
+      <span class="na">id</span><span class="pi">:</span> <span class="s">install-deps</span>
+      <span class="na">if</span><span class="pi">:</span> <span class="s">steps.cache.outputs.cache-hit != 'true' || inputs.to-cache != 'true'</span>
+      <span class="c1"># shell required if using 'run' key</span>
+      <span class="na">run</span><span class="pi">:</span> <span class="pi">|</span>
+        <span class="s">npm ci</span>
+        <span class="s">echo "cache-output=$" &gt;&gt; $GITHUB_OUTPUT</span>
+      <span class="na">shell</span><span class="pi">:</span> <span class="s">bash</span>
+</code></pre></div></div> <h3 id="example-using-custom-action-at-workflow-yml">Example (Using custom Action at workflow yml)</h3> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">lint</span><span class="pi">:</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get code</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v3</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Load and cache dependencies</span>
+        <span class="na">id</span><span class="pi">:</span> <span class="s">cache-deps</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">./.github/actions/cached-deps</span> <span class="c1">#gh-actions will look for action.yml</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">to-cache</span><span class="pi">:</span> <span class="s2">"</span><span class="s">false"</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Output Information</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">echo "Cached used? $"</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Lint code</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm run lint</span>
+</code></pre></div></div> <h2 id="javascript-actions">JavaScript Actions</h2> <ul> <li>Contains action.yml and some_name.js within <code class="language-plaintext highlighter-rouge">.github/&lt;folder_name&gt;/&lt;action_name&gt;/</code> directory</li> <li>Requires addition npm libraries <ul> <li> <code class="language-plaintext highlighter-rouge">cd</code> to the directory where the action files are located</li> <li> <code class="language-plaintext highlighter-rouge">npm init -y</code> <ul> <li>Requires nodeJS installed in your system</li> </ul> </li> <li><code class="language-plaintext highlighter-rouge">npm install @actions/core @actions/github @actions/exec</code></li> </ul> </li> </ul> <blockquote> <p>💡 Ensure all files in node_modules in the directory is not gitignored</p> </blockquote> <h3 id="actionyml">action.yml</h3> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Deploy</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">AWS</span><span class="nv"> </span><span class="s">S3"</span>
+<span class="na">description</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Deploy</span><span class="nv"> </span><span class="s">static</span><span class="nv"> </span><span class="s">website</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">AWS</span><span class="nv"> </span><span class="s">S3"</span>
+<span class="na">inputs</span><span class="pi">:</span>
+  <span class="na">bucket</span><span class="pi">:</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s2">"</span><span class="s">S3</span><span class="nv"> </span><span class="s">bucket</span><span class="nv"> </span><span class="s">name"</span>
+    <span class="na">required</span><span class="pi">:</span> <span class="kc">true</span>
+  <span class="na">bucket-region</span><span class="pi">:</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s2">"</span><span class="s">S3</span><span class="nv"> </span><span class="s">bucket</span><span class="nv"> </span><span class="s">region"</span>
+    <span class="na">required</span><span class="pi">:</span> <span class="kc">false</span>
+    <span class="na">default</span><span class="pi">:</span> <span class="s2">"</span><span class="s">ap-southeast-1"</span>
+  <span class="na">dist-folder</span><span class="pi">:</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Folder</span><span class="nv"> </span><span class="s">containing</span><span class="nv"> </span><span class="s">deployable</span><span class="nv"> </span><span class="s">files."</span>
+    <span class="na">required</span><span class="pi">:</span> <span class="kc">true</span>
+<span class="na">outputs</span><span class="pi">:</span>
+  <span class="na">website-url</span><span class="pi">:</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s2">"</span><span class="s">URL</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">deployed</span><span class="nv"> </span><span class="s">site"</span>
+    <span class="c1"># NOTE: WE DO NOT HAVE VALUES HERE.</span>
+    <span class="c1"># HANDLED IN THE JS FILE</span>
+
+<span class="na">runs</span><span class="pi">:</span>
+  <span class="na">using</span><span class="pi">:</span> <span class="s2">"</span><span class="s">node16"</span> <span class="c1"># Tells gh that this is a JS Action</span>
+  <span class="na">main</span><span class="pi">:</span> <span class="s2">"</span><span class="s">main.js"</span> <span class="c1"># File the gh action is going to use</span>
+</code></pre></div></div> <h3 id="mainjs">main.js</h3> <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">core</span> <span class="o">=</span> <span class="nf">require</span><span class="p">(</span><span class="dl">"</span><span class="s2">@actions/core</span><span class="dl">"</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">github</span> <span class="o">=</span> <span class="nf">require</span><span class="p">(</span><span class="dl">"</span><span class="s2">@actions/github</span><span class="dl">"</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">exec</span> <span class="o">=</span> <span class="nf">require</span><span class="p">(</span><span class="dl">"</span><span class="s2">@actions/exec</span><span class="dl">"</span><span class="p">);</span>
+
+<span class="kd">function</span> <span class="nf">run</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">core</span><span class="p">.</span><span class="nf">notice</span><span class="p">(</span><span class="dl">"</span><span class="s2">Hello from custom JavaScript Action</span><span class="dl">"</span><span class="p">);</span>
+  <span class="c1">// Get input vals</span>
+  <span class="kd">const</span> <span class="nx">bucket</span> <span class="o">=</span> <span class="nx">core</span><span class="p">.</span><span class="nf">getInput</span><span class="p">(</span><span class="dl">"</span><span class="s2">bucket</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span> <span class="na">required</span><span class="p">:</span> <span class="kc">true</span> <span class="p">});</span>
+  <span class="kd">const</span> <span class="nx">bucketRegion</span> <span class="o">=</span> <span class="nx">core</span><span class="p">.</span><span class="nf">getInput</span><span class="p">(</span><span class="dl">"</span><span class="s2">bucket-region</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span> <span class="na">required</span><span class="p">:</span> <span class="kc">false</span> <span class="p">});</span>
+  <span class="kd">const</span> <span class="nx">distFolder</span> <span class="o">=</span> <span class="nx">core</span><span class="p">.</span><span class="nf">getInput</span><span class="p">(</span><span class="dl">"</span><span class="s2">dist-folder</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span> <span class="na">required</span><span class="p">:</span> <span class="kc">true</span> <span class="p">});</span>
+
+  <span class="c1">// Upload to s3</span>
+  <span class="kd">const</span> <span class="nx">s3uri</span> <span class="o">=</span> <span class="s2">`s3://</span><span class="p">${</span><span class="nx">bucket</span><span class="p">}</span><span class="s2">`</span><span class="p">;</span>
+  <span class="nx">exec</span><span class="p">.</span><span class="nf">exec</span><span class="p">(</span><span class="s2">`aws s3 sync </span><span class="p">${</span><span class="nx">distFolder</span><span class="p">}</span><span class="s2"> </span><span class="p">${</span><span class="nx">s3uri</span><span class="p">}</span><span class="s2"> --region </span><span class="p">${</span><span class="nx">bucketRegion</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
+
+  <span class="c1">// Return URL</span>
+  <span class="kd">const</span> <span class="nx">websiteUrl</span> <span class="o">=</span> <span class="s2">`http://</span><span class="p">${</span><span class="nx">bucket</span><span class="p">}</span><span class="s2">.s3-website-</span><span class="p">${</span><span class="nx">bucketRegion</span><span class="p">}</span><span class="s2">.amazonaws.com`</span><span class="p">;</span>
+  <span class="nx">core</span><span class="p">.</span><span class="nf">setOutput</span><span class="p">(</span><span class="dl">"</span><span class="s2">website-url</span><span class="dl">"</span><span class="p">,</span> <span class="nx">websiteUrl</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nf">run</span><span class="p">();</span>
+</code></pre></div></div> <h3 id="workflow-1">workflow</h3> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">lint</span><span class="pi">:</span> <span class="s">...</span>
+  <span class="na">test</span><span class="pi">:</span> <span class="s">...</span>
+  <span class="na">build</span><span class="pi">:</span> <span class="s">...</span>
+  <span class="na">deploy</span><span class="pi">:</span>
+    <span class="na">needs</span><span class="pi">:</span> <span class="s">build</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get code</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v3</span> <span class="c1"># REQUIRED for local JS Action</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get build artifacts</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/download-artifact@v3</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">dist-files</span>
+          <span class="na">path</span><span class="pi">:</span> <span class="s">./dist</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Output contents</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">ls</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Deploy site</span>
+        <span class="na">id</span><span class="pi">:</span> <span class="s">deploy</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">./.github/actions/deploy-s3-javascript</span>
+        <span class="na">env</span><span class="pi">:</span>
+          <span class="na">AWS_ACCESS_KEY_ID</span><span class="pi">:</span> <span class="s">$</span>
+          <span class="na">AWS_SECRET_ACCESS_KEY</span><span class="pi">:</span> <span class="s">$</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">bucket</span><span class="pi">:</span> <span class="s">jk-gha-custom-hosting</span>
+          <span class="na">dist-folder</span><span class="pi">:</span> <span class="s">./dist</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Output Info</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="pi">|</span>
+          <span class="s">echo 'URL: $'</span>
+</code></pre></div></div> <blockquote> <p>💡 JS Custom action requires user to do <code class="language-plaintext highlighter-rouge">actions/checkout</code> if the action is a local custom action</p> </blockquote> <h2 id="docker-action">Docker Action</h2> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Deploy</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">AWS</span><span class="nv"> </span><span class="s">S3</span><span class="nv"> </span><span class="s">Docker"</span>
+<span class="na">description</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Deploy</span><span class="nv"> </span><span class="s">static</span><span class="nv"> </span><span class="s">website</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">AWS</span><span class="nv"> </span><span class="s">S3</span><span class="nv"> </span><span class="s">via</span><span class="nv"> </span><span class="s">docker"</span>
+<span class="na">inputs</span><span class="pi">:</span>
+  <span class="na">bucket</span><span class="pi">:</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s2">"</span><span class="s">S3</span><span class="nv"> </span><span class="s">bucket</span><span class="nv"> </span><span class="s">name"</span>
+    <span class="na">required</span><span class="pi">:</span> <span class="kc">true</span>
+  <span class="na">bucket-region</span><span class="pi">:</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s2">"</span><span class="s">S3</span><span class="nv"> </span><span class="s">bucket</span><span class="nv"> </span><span class="s">region"</span>
+    <span class="na">required</span><span class="pi">:</span> <span class="kc">false</span>
+    <span class="na">default</span><span class="pi">:</span> <span class="s2">"</span><span class="s">ap-southeast-1"</span>
+  <span class="na">dist-folder</span><span class="pi">:</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Folder</span><span class="nv"> </span><span class="s">containing</span><span class="nv"> </span><span class="s">deployable</span><span class="nv"> </span><span class="s">files."</span>
+    <span class="na">required</span><span class="pi">:</span> <span class="kc">true</span>
+<span class="na">outputs</span><span class="pi">:</span>
+  <span class="na">website-url</span><span class="pi">:</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s2">"</span><span class="s">URL</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">deployed</span><span class="nv"> </span><span class="s">site"</span>
+
+<span class="na">runs</span><span class="pi">:</span>
+  <span class="na">using</span><span class="pi">:</span> <span class="s2">"</span><span class="s">docker"</span>
+  <span class="na">image</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Dockerfile"</span>
+</code></pre></div></div> <blockquote> <p>💡 gh generates ENV*VAR for the inputs with prefix <code class="language-plaintext highlighter-rouge">INPUT*\*</code>. [SEE BELOW]</p> </blockquote> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">bucket</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sh">'</span><span class="s">INPUT_BUCKET</span><span class="sh">'</span><span class="p">]</span>
+<span class="n">bucket_region</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sh">'</span><span class="s">INPUT_BUCKET-REGION</span><span class="sh">'</span><span class="p">]</span>
+<span class="n">dist_folder</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sh">'</span><span class="s">INPUT_DIST-FOLDER</span><span class="sh">'</span><span class="p">]</span>
+</code></pre></div></div> <blockquote> <p>💡 outputs are handled by using the print of the language. E.g. python print() [SEE BELOW]</p> </blockquote> <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">with</span> <span class="nf">open</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sh">'</span><span class="s">GITHUB_OUTPUT</span><span class="sh">'</span><span class="p">],</span> <span class="sh">'</span><span class="s">a</span><span class="sh">'</span><span class="p">)</span> <span class="k">as</span> <span class="n">gh_output</span><span class="p">:</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">website-url=</span><span class="si">{</span><span class="n">website_url</span><span class="si">}</span><span class="sh">'</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">gh_output</span><span class="p">)</span>
+</code></pre></div></div> <h1 id="security-of-gh-actions">Security of gh actions</h1> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/20-480.webp 480w,/assets/img/2025-01-13-github-actions/20-800.webp 800w,/assets/img/2025-01-13-github-actions/20-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/20.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h2 id="script-injections">Script Injections</h2> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/21-480.webp 480w,/assets/img/2025-01-13-github-actions/21-800.webp 800w,/assets/img/2025-01-13-github-actions/21-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/21.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <ul> <li>Be careful of assignment of variables in <code class="language-plaintext highlighter-rouge">run</code> <ul> <li> <code class="language-plaintext highlighter-rouge">issue_title="$”</code> can lead to script injection by passing in: <code class="language-plaintext highlighter-rouge">a”; echo $AWS_ACCESS_KEY_ID</code> - This results in - <code class="language-plaintext highlighter-rouge">issue_title="a"</code> - <code class="language-plaintext highlighter-rouge">echo $AWS_ACCESS_KEY_ID</code> - which will give the details</li> <li>Solve this by using a ENV_VAR instead</li> </ul> </li> </ul> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/22-480.webp 480w,/assets/img/2025-01-13-github-actions/22-800.webp 800w,/assets/img/2025-01-13-github-actions/22-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/22.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h2 id="actions">Actions</h2> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/2025-01-13-github-actions/23-480.webp 480w,/assets/img/2025-01-13-github-actions/23-800.webp 800w,/assets/img/2025-01-13-github-actions/23-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/2025-01-13-github-actions/23.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"> </picture> </figure> <h2 id="permission">Permission</h2> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">Label Issues (Permissions Example)</span>
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">issues</span><span class="pi">:</span>
+    <span class="na">types</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">opened</span>
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">assign-label</span><span class="pi">:</span>
+    <span class="na">permissions</span><span class="pi">:</span> <span class="c1"># RESTRICT PERMISSION. DEFAULT: FULL ACCESS ON EVERYTHING.</span>
+      <span class="na">issues</span><span class="pi">:</span> <span class="s">write</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Assign label</span>
+        <span class="na">if</span><span class="pi">:</span> <span class="s">contains(github.event.issue.title, 'bug')</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="pi">|</span>
+          <span class="s">curl -X POST \</span>
+          <span class="s">--url https://api.github.com/repos/$/issues/$/labels \</span>
+          <span class="s">-H 'authorization: Bearer $' \</span>
+          <span class="s">-H 'content-type: application/json' \</span>
+          <span class="s">-d '{</span>
+              <span class="s">"labels": ["bug"]</span>
+            <span class="s">}' \</span>
+          <span class="s">--fail</span>
+</code></pre></div></div> <h3 id="secretsgithub_token">secrets.GITHUB_TOKEN</h3> <p>Token generated by github for the github API</p> <ul> <li>Gets revoked by the end of the job</li> <li>Permissions set in the yml will be the permission assigned to the GITHUB_TOKEN.</li> </ul> <h2 id="managing-more-permissions">Managing more permissions</h2> <p>Repository → Setting → Action → General</p> <h2 id="managing-secret-keys-for-3rd-party-platforms">Managing Secret Keys for 3rd-party platforms</h2> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Deploy site</span>
+  <span class="na">id</span><span class="pi">:</span> <span class="s">deploy</span>
+  <span class="na">uses</span><span class="pi">:</span> <span class="s">./.github/actions/deploy-s3-javascript</span>
+  <span class="na">env</span><span class="pi">:</span>
+    <span class="na">AWS_ACCESS_KEY_ID</span><span class="pi">:</span> <span class="s">$</span>
+    <span class="na">AWS_SECRET_ACCESS_KEY</span><span class="pi">:</span> <span class="s">$</span>
+</code></pre></div></div> <ul> <li>Information like <code class="language-plaintext highlighter-rouge">AWS_ACCESS_KEY_ID</code> and <code class="language-plaintext highlighter-rouge">AWS_SECRET_ACCESS_KEY</code> are saved in the github action secrets <ul> <li>But still vulnerable to script injections</li> </ul> </li> <li>OpenID Connect can help to make it more secure <ul> <li>Dynamically gets credentials</li> <li>Requires setting up AWS IAM Role for this</li> <li>Uses <code class="language-plaintext highlighter-rouge">aws-actions/configure-aws-credentials</code> </li> <li>Do not need the <code class="language-plaintext highlighter-rouge">env</code> anymore</li> </ul> </li> </ul> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">job</span><span class="pi">:</span>
+  <span class="na">deploy</span><span class="pi">:</span>
+    <span class="na">permissions</span><span class="pi">:</span>
+      <span class="na">id-token</span><span class="pi">:</span> <span class="s">write</span> <span class="c1"># REQUIRED as default GITHUB_TOKEN is set to None for this</span>
+      <span class="na">contents</span><span class="pi">:</span> <span class="s">read</span>
+    <span class="s">...</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="c1"># Do something above</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Get AWS Permissions</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">aws-actions/configure-aws-credentials@v1</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">role-to-assume</span><span class="pi">:</span> <span class="s">arn:aws:iam::...</span>
+          <span class="na">aws-region</span><span class="pi">:</span> <span class="s">...</span>
+      <span class="s">...</span>
+</code></pre></div></div> </div> </article> <br> <hr> <br> <ul class="list-disc pl-8"></ul> <h1 class="text-3xl font-semibold mb-4 mt-12">Enjoy Reading This Article?</h1> <p class="mb-2">Here are some more articles you might like to read next:</p> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2025/chess-de-project/">Chess DE Project</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2025/full-vs-incremental-load/">Full vs incremental load</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2025/oltp-vs-olap/">Benchmarking OLTP vs OLAP</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2025/terraform-notes/">Terraform Tutorial</a> </li> <li class="my-2"> <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2025/docker-notes/">Docker Tutorial</a> </li> </div> </div> <footer class="sticky-bottom mt-5" role="contentinfo"> <div class="container"> © Copyright 2025 John Koh. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. </div> </footer> <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> <script src="/assets/js/bootstrap.bundle.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?a0db7e5d5c70cc3252b3138b0c91dcaf" type="text/javascript"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/js/zoom.js?85ddb88934d28b74e78031fd54cf8308"></script> <script src="/assets/js/no_defer.js?2781658a0a2b13ed609542042a859126"></script> <script defer src="/assets/js/common.js?e0514a05c5c95ac1a93a8dfd5249b92e"></script> <script defer src="/assets/js/copy_code.js?12775fdf7f95e901d7119054556e495f" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?d9f17b6adc2311cbabd747f4538bb15f"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/js/mathjax-setup.js?a5bb4e6a542c546dd929b24b8b236dfd"></script> <script defer src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6" crossorigin="anonymous"></script> <script async src="https://www.googletagmanager.com/gtag/js?id=G-57NGLGRVZL"></script> <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'G-57NGLGRVZL');
+  </script> <script defer src="/assets/js/google-analytics-setup.js?12374742c4b1801ba82226e617af7e2d"></script> <script defer src="/assets/js/progress-bar.js?2f30e0e6801ea8f5036fa66e1ab0a71a" type="text/javascript"></script> <script src="/assets/js/vanilla-back-to-top.min.js?f40d453793ff4f64e238e420181a1d17"></script> <script>
+    addBackToTop();
+  </script> </body> </html>
