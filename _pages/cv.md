@@ -1,11 +1,10 @@
 ---
 layout: cv
-permalink: /cv/
-title: cv
+permalink: /about/
+title: About
+description: Hi I'm John! I am currently a Data Engineer and I have been in the data space for 7+ years. I've designed and built scalable data pipelines across multiple industries (e.g. logistics, ride hailing, geospatial and cyber security).
 nav: true
-nav_order: 5
-cv_pdf: example_pdf.pdf # you can also use external links here
-description: This is a description of the page. You can modify it in '_pages/cv.md'. You can also change or remove the top pdf download button.
+nav_order: 2
 toc:
-  sidebar: left
+  sidebar: right
 ---
