@@ -122,18 +122,7 @@ ninja.data = [{
             window.location.href = "/blog/2019/profiling-my-favourite-songs-on-spotify-through-clustering/";
           
         },
-      },{id: "news-a-simple-inline-announcement",
-          title: 'A simple inline announcement.',
-          description: "",
-          section: "News",},{id: "news-a-long-announcement-with-details",
-          title: 'A long announcement with details',
-          description: "",
-          section: "News",handler: () => {
-              window.location.href = "/news/announcement_2/";
-            },},{id: "news-a-simple-inline-announcement-with-markdown-emoji-sparkles-smile",
-          title: 'A simple inline announcement with Markdown emoji! :sparkles: :smile:',
-          description: "",
-          section: "News",},{
+      },{
         id: 'social-email',
         title: 'email',
         section: 'Socials',
