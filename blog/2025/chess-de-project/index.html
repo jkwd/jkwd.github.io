@@ -248,8 +248,8 @@
             <span class="p">[</span><span class="sh">"</span><span class="s">--quiet</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">parse</span><span class="sh">"</span><span class="p">],</span>
             <span class="n">target_path</span><span class="o">=</span><span class="nc">Path</span><span class="p">(</span><span class="sh">"</span><span class="s">target</span><span class="sh">"</span><span class="p">),</span>
         <span class="p">)</span>
-        <span class="p">.</span><span class="nf">wait</span><span class="p">()</span>
-        <span class="p">.</span><span class="n">target_path</span><span class="p">.</span><span class="nf">joinpath</span><span class="p">(</span><span class="sh">"</span><span class="s">manifest.json</span><span class="sh">"</span><span class="p">)</span>
+        <span class="p">.</span><span class="nf">wait</span><span class="p">()</span> <span class="c1"># wait for the parse command to finish as dbt_resource.cli() creates a subprocess
+</span>        <span class="p">.</span><span class="n">target_path</span><span class="p">.</span><span class="nf">joinpath</span><span class="p">(</span><span class="sh">"</span><span class="s">manifest.json</span><span class="sh">"</span><span class="p">)</span>
     <span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="n">dbt_manifest_path</span> <span class="o">=</span> <span class="n">dbt_project_dir</span><span class="p">.</span><span class="nf">joinpath</span><span class="p">(</span><span class="sh">"</span><span class="s">target</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">manifest.json</span><span class="sh">"</span><span class="p">)</span>
