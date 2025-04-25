@@ -354,6 +354,24 @@ chess_dbt:
 
 Above are the configurations for the `dbt_project.yml` and `profiles.yml`.
 
+### Configuring the dbt sources to point to the dlt assets
+
+```yaml
+# schema.yml
+
+sources:
+  - name: chess_source
+    schema: chess_data_raw
+    tables:
+      - name: player_games
+        meta:
+          dagster:
+            asset_key: ["dlt_chess_player_games"]
+        columns:
+```
+
+Early in [this](#configuring-the-source), I have explained that the resulting asset from dlt to dagster will be `dlt_chess_player_games`. When configuring the dbt source, we will need to point that source to the dagster asset for the lineage to work. We introduce the `meta` with the necessary dagster `asset_key`.
+
 ### Using python UDFs
 
 In the `profiles.yml` you may notice something less familiar under the `module_paths` and `plugins`. DuckDB allows us to register Python UDFs which can then be used as a function in our SQL models. So we create the UDF in `my_custom_functions.py` file located at the specified module_paths.
